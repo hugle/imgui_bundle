@@ -4,7 +4,7 @@
 
 namespace py = pybind11;
 
-void py_init_module_hello_imgui(py::module& m);
+//void py_init_module_hello_imgui(py::module& m);
 void py_init_module_imgui_main(py::module& m);
 void py_init_module_imgui_internal(py::module& m);
 void py_init_module_imgui_test_engine(py::module& m);
@@ -15,17 +15,17 @@ void py_init_module_imgui_knobs(py::module& m);
 void py_init_module_im_file_dialog(py::module& m);
 void py_init_module_imspinner(py::module& m);
 void py_init_module_imgui_md(py::module& m);
-void py_init_module_immvision(py::module& m);
+//void py_init_module_immvision(py::module& m);
 void py_init_module_imgui_backends(py::module& m);
-void py_init_module_imguizmo(py::module& m);
-void py_init_module_imgui_tex_inspect(py::module& m);
-void py_init_module_immapp_cpp(py::module& m);
+//void py_init_module_imguizmo(py::module& m);
+//void py_init_module_imgui_tex_inspect(py::module& m);
+//void py_init_module_immapp_cpp(py::module& m);
 void py_init_module_imgui_toggle(py::module& m);
 void py_init_module_portable_file_dialogs(py::module& m);
 void py_init_module_imgui_command_palette(py::module& m);
 void py_init_module_implot_internal(py::module& m);
 void py_init_module_imcoolbar(py::module& m);
-void py_init_module_nanovg(py::module& m);
+//void py_init_module_nanovg(py::module& m);
 
 
 void py_init_module_imgui_bundle(py::module& m)
@@ -47,8 +47,8 @@ void py_init_module_imgui_bundle(py::module& m)
     auto module_imgui_test_engine =  module_imgui.def_submodule("test_engine");
     py_init_module_imgui_test_engine(module_imgui_test_engine);
 
-    auto module_himgui =  m.def_submodule("hello_imgui");
-    py_init_module_hello_imgui(module_himgui);
+    //auto module_himgui =  m.def_submodule("hello_imgui");
+    //py_init_module_hello_imgui(module_himgui);
 
     auto module_implot =  m.def_submodule("implot");
     py_init_module_implot(module_implot);
@@ -74,17 +74,17 @@ void py_init_module_imgui_bundle(py::module& m)
     auto module_imgui_md =  m.def_submodule("imgui_md");
     py_init_module_imgui_md(module_imgui_md);
 
-    auto module_immvision =  m.def_submodule("immvision");
-    py_init_module_immvision(module_immvision);
+    //auto module_immvision =  m.def_submodule("immvision");
+    //py_init_module_immvision(module_immvision);
 
-    auto module_imguizmo = m.def_submodule("imguizmo");
-    py_init_module_imguizmo(module_imguizmo);
+    //auto module_imguizmo = m.def_submodule("imguizmo");
+    //py_init_module_imguizmo(module_imguizmo);
 
-    auto module_imgui_tex_inspect = m.def_submodule("imgui_tex_inspect");
-    py_init_module_imgui_tex_inspect(module_imgui_tex_inspect);
+    //auto module_imgui_tex_inspect = m.def_submodule("imgui_tex_inspect");
+    //py_init_module_imgui_tex_inspect(module_imgui_tex_inspect);
 
-    auto module_immapp_cpp = m.def_submodule("immapp_cpp");
-    py_init_module_immapp_cpp(module_immapp_cpp);
+    //auto module_immapp_cpp = m.def_submodule("immapp_cpp");
+    //py_init_module_immapp_cpp(module_immapp_cpp);
 
     auto module_imgui_toggle = m.def_submodule("imgui_toggle");
     py_init_module_imgui_toggle(module_imgui_toggle);
@@ -98,8 +98,8 @@ void py_init_module_imgui_bundle(py::module& m)
     auto module_imcooolbar = m.def_submodule("im_cool_bar");
     py_init_module_imcoolbar(module_imcooolbar);
 
-    auto module_nanovg = m.def_submodule("nanovg");
-    py_init_module_nanovg(module_nanovg);
+    //auto module_nanovg = m.def_submodule("nanovg");
+    //py_init_module_nanovg(module_nanovg);
 }
 
 

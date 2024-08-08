@@ -40,13 +40,24 @@ Repository = "https://github.com/pthom/imgui_bundle"
 Issues = "https://github.com/pthom/imgui_bundle/issues"
 Changelog = "https://github.com/pthom/imgui_bundle/blob/main/CHANGELOG.md"
 
-[project.scripts]
-demo_imgui_bundle="imgui_bundle.demos_python.demo_imgui_bundle:main"
-imgui_bundle_demo="imgui_bundle.demos_python.demo_imgui_bundle:main"
+#[project.scripts]
+#demo_imgui_bundle="imgui_bundle.demos_python.demo_imgui_bundle:main"
+#imgui_bundle_demo="imgui_bundle.demos_python.demo_imgui_bundle:main"
 
 [tool.scikit-build]
 wheel.expand-macos-universal-tags = true
 wheel.packages = ["bindings/imgui_bundle"]
+# wheel.exclude = ["bindings/imgui_bundle/doc/*", 
+#                  "bindings/imgui_bundle/demos_cpp/*",
+#                  "bindings/imgui_bundle/immapp/*",
+#                  "bindings/imgui_bundle/demos_python/*",
+#                  "bindings/imgui_bundle/demos_assets/*",
+#                  "bindings/imgui_bundle/immvision.pyi",
+#                  "bindings/imgui_bundle/imgui_fig.pyi",
+#                  "bindings/imgui_bundle/imgui_tex_inspect.pyi",
+#                  "bindings/imgui_bundle/imguizmo.pyi",
+#                  "bindings/imgui_bundle/nanovg.pyi",
+#                 ]
 
 [tool.isort]
 profile = "black"

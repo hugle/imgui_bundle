@@ -23,7 +23,7 @@ function(add_imgui imgui_dir)
         add_library(imgui STATIC ${imgui_sources})
         if (IMGUI_BUNDLE_BUILD_PYTHON)
             # For python bindings we add opengl2 backend
-            target_sources(imgui PRIVATE ${imgui_dir}/backends/imgui_impl_opengl2.cpp ${imgui_dir}/backends/imgui_impl_opengl2.h)
+            target_sources(imgui PRIVATE ${imgui_dir}/backends/imgui_impl_opengl3.cpp ${imgui_dir}/backends/imgui_impl_opengl3.h)
         endif()
         set(HELLOIMGUI_IMGUI_SOURCE_DIR ${imgui_dir})
         target_include_directories(imgui PUBLIC

@@ -2,9 +2,9 @@
 #include <pybind11/pybind11.h>
 
 #include "imgui_impl_glfw.h"
-#include "imgui_impl_sdl2.h"
+//#include "imgui_impl_sdl2.h"
 #include "imgui_impl_opengl3.h"
-#include "imgui_impl_opengl2.h"
+//#include "imgui_impl_opengl2.h"
 
 namespace py = pybind11;
 
@@ -48,29 +48,29 @@ void py_init_module_imgui_backends(py::module& m)
     //
     // <bindings for imgui_impl_opengl2.h
     //
-    m.def("opengl2_init",
-          ImGui_ImplOpenGL2_Init);
+    // m.def("opengl2_init",
+    //       ImGui_ImplOpenGL2_Init);
 
-    m.def("opengl2_shutdown",
-          ImGui_ImplOpenGL2_Shutdown);
+    // m.def("opengl2_shutdown",
+    //       ImGui_ImplOpenGL2_Shutdown);
 
-    m.def("opengl2_new_frame",
-          ImGui_ImplOpenGL2_NewFrame);
+    // m.def("opengl2_new_frame",
+    //       ImGui_ImplOpenGL2_NewFrame);
 
-    m.def("opengl2_render_draw_data",
-          ImGui_ImplOpenGL2_RenderDrawData, py::arg("draw_data"));
+    // m.def("opengl2_render_draw_data",
+    //       ImGui_ImplOpenGL2_RenderDrawData, py::arg("draw_data"));
 
-    m.def("opengl2_create_fonts_texture",
-          ImGui_ImplOpenGL2_CreateFontsTexture);
+    // m.def("opengl2_create_fonts_texture",
+    //       ImGui_ImplOpenGL2_CreateFontsTexture);
 
-    m.def("opengl2_destroy_fonts_texture",
-          ImGui_ImplOpenGL2_DestroyFontsTexture);
+    // m.def("opengl2_destroy_fonts_texture",
+    //       ImGui_ImplOpenGL2_DestroyFontsTexture);
 
-    m.def("opengl2_create_device_objects",
-          ImGui_ImplOpenGL2_CreateDeviceObjects);
+    // m.def("opengl2_create_device_objects",
+    //       ImGui_ImplOpenGL2_CreateDeviceObjects);
 
-    m.def("opengl2_destroy_device_objects",
-          ImGui_ImplOpenGL2_DestroyDeviceObjects);
+    // m.def("opengl2_destroy_device_objects",
+    //       ImGui_ImplOpenGL2_DestroyDeviceObjects);
 
 
     //
