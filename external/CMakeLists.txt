@@ -237,7 +237,7 @@ add_simple_external_library_with_sources(imgui_toggle imgui_toggle)
 # Build imgui_command_palette
 add_simple_external_library_with_sources(imgui_command_palette imgui-command-palette)
 # Add ImCoolBar
-add_simple_external_library_with_sources(imcoolbar ImCoolBar)
+#add_simple_external_library_with_sources(imcoolbar ImCoolBar)
 # Add portable_file_dialogs
 add_library(portable_file_dialogs INTERFACE)
 target_include_directories(portable_file_dialogs INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/portable_file_dialogs>)

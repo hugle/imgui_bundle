@@ -10,7 +10,6 @@ from imgui_bundle._imgui_bundle import imgui_md as imgui_md
 from imgui_bundle._imgui_bundle import imgui_toggle as imgui_toggle
 from imgui_bundle._imgui_bundle import portable_file_dialogs as portable_file_dialogs
 from imgui_bundle._imgui_bundle import imgui_command_palette as imgui_command_palette
-from imgui_bundle._imgui_bundle import im_cool_bar as im_cool_bar
 
 # Note: to enable font awesome 6:
 #     runner_params.callbacks.default_icon_font = hello_imgui.DefaultIconFont.font_awesome6

@@ -95,8 +95,8 @@ void py_init_module_imgui_bundle(py::module& m)
     auto module_imgui_command_palette = m.def_submodule("imgui_command_palette");
     py_init_module_imgui_command_palette(module_imgui_command_palette);
 
-    auto module_imcooolbar = m.def_submodule("im_cool_bar");
-    py_init_module_imcoolbar(module_imcooolbar);
+    //auto module_imcooolbar = m.def_submodule("im_cool_bar");
+    //py_init_module_imcoolbar(module_imcooolbar);
 
     //auto module_nanovg = m.def_submodule("nanovg");
     //py_init_module_nanovg(module_nanovg);
