@@ -75,6 +75,7 @@ def _add_imvector_template_options(options: litgen.LitgenOptions):
         "ImFontAtlasCustomRect",
         "ImFontConfig",
         "ImGuiFocusScopeData",
+        "ImGuiSelectionRequest",
         # from imgui_internal.h
         "ImRect",
         "ImGuiColorMod",
@@ -86,7 +87,6 @@ def _add_imvector_template_options(options: litgen.LitgenOptions):
         "ImGuiTableColumnSortSpecs",
         "ImGuiTableInstanceData",
         "ImGuiTableTempData",
-        "ImGuiNavTreeNodeData",
         "ImGuiPtrOrIndex",
         "ImGuiSettingsHandler",
         "ImGuiShrinkWidthItem",
@@ -99,6 +99,8 @@ def _add_imvector_template_options(options: litgen.LitgenOptions):
         "ImGuiOldColumns",
         "ImGuiStyleMod",  # uses union
         "ImGuiTableHeaderData",  # new in v1.90.7
+        "ImGuiTreeNodeStackData",
+        "ImGuiMultiSelectTempData"
     ]
     cpp_synonyms_list_str = [
         "ImTextureID=int",
@@ -326,6 +328,7 @@ def litgen_options_imgui(
             #     typedef void (*ImDrawCallback)(const ImDrawList* parent_list, const ImDrawCmd* cmd);
             #     ImDrawCallback  UserCallback;       // 4-8  // If != NULL, call the function instead of rendering the vertices. clip_rect and texture_id will be set normally.
             r"^TexPixelsAlpha8$",
+            r"^Stb$",
         ]
     )
 
@@ -387,6 +390,7 @@ def litgen_options_imgui(
             r"^AddConcavePolyFilled",
             r"^ColorPicker4",
             r"^Shortcut",
+            r"^SetItemKeyOwner"
         ]
     )
     options.fn_force_lambda__regex = join_string_by_pipe_char(
