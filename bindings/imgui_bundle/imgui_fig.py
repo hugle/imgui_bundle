@@ -1,21 +1,23 @@
 """imgui_fig.fig: Display Matplotlib figures in an ImGui window.
 
-Important: before importing pyplot, set the renderer to Tk,
-so that the figure is not displayed on the screen before we can capture it.
-"""
-import matplotlib
-matplotlib.use('Agg')     #
-import matplotlib.pyplot as plt
+Important:
+  in order to use imgui_fig, you need to change matplotlib renderer to Agg.
+  so that the figure is not displayed on the screen before we can capture it:
+  add the following lines at the start of your script (and before importing pyplot):
 
-import numpy
-import cv2
-import matplotlib
-from imgui_bundle.immapp import static
-from imgui_bundle import immvision, ImVec2, imgui
+        import matplotlib
+        matplotlib.use('Agg')
+
+"""
+from matplotlib.figure import Figure  # noqa: E402
+import numpy  # noqa: E402
+import matplotlib  # noqa: E402
+from imgui_bundle.immapp import static  # noqa: E402
+from imgui_bundle import immvision, ImVec2, imgui  # noqa: E402
 
 
 @static(fig_image_cache=dict())
-def _fig_to_image(label_id: str, figure: matplotlib.figure.Figure, refresh_image: bool = False) -> numpy.ndarray:
+def _fig_to_image(label_id: str, figure: Figure, refresh_image: bool = False) -> numpy.ndarray:
     """
     Convert a Matplotlib figure to an RGB image.
 
@@ -35,11 +37,24 @@ def _fig_to_image(label_id: str, figure: matplotlib.figure.Figure, refresh_image
         # Get the RGBA buffer from the figure
         w, h = figure.canvas.get_width_height()
         buf = numpy.fromstring(figure.canvas.tostring_rgb(), dtype=numpy.uint8)
-        buf.shape = (h, w, 3)
-        img_rgb = cv2.cvtColor(buf, cv2.COLOR_RGB2BGR)
+
+        try:
+            buf.shape = (h, w, 3)
+        except ValueError as e:
+            msg = """
+        imgui_fig.fig failed: in order to use imgui_fig, you need to change matplotlib renderer to Agg.
+        Add the following lines at the start of your script (and before importing pyplot):
+
+            import matplotlib
+            matplotlib.use('Agg')
+            """
+            raise RuntimeError(msg) from e
+
+        img = buf
         matplotlib.pyplot.close(figure)
-        statics.fig_image_cache[fig_id] = img_rgb
+        statics.fig_image_cache[fig_id] = img
     return statics.fig_image_cache[fig_id]
+
 
 
 
@@ -74,7 +89,9 @@ def fig(label_id: str,
     """
     image_rgb = _fig_to_image(label_id, figure, refresh_image)
 
+    immvision.push_color_order_rgb()
     mouse_position_tuple = immvision.image_display_resizable(
         label_id, image_rgb, size, refresh_image, resizable, show_options_button)
+    immvision.pop_color_order()
     mouse_position = ImVec2(mouse_position_tuple[0], mouse_position_tuple[1])
     return mouse_position

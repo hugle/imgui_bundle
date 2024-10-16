@@ -51,6 +51,9 @@ def _preprocess_imgui_code(code: str) -> str:
 
     new_code = new_code.replace("unsigned char", "uchar")
 
+    new_code = new_code.replace("BundleHybridCallback", "std::function")
+    new_code = new_code.replace("BundleHybridStr", "std::string")
+
     return new_code
 
 
@@ -251,8 +254,15 @@ def litgen_options_imgui(
     # fix https://github.com/pthom/imgui_bundle/issues/40
     options.var_names_replacements.add_last_replacement(r"im_gui_selectable_flags_", "")
     options.var_names_replacements.add_last_replacement(r"im_gui_dock_node_flags_", "")
+    options.var_names_replacements.add_last_replacement(r"im_gui_", "")
 
     # options.names_replacements.add_last_replacement(r"(^ImGui)([A-Z])", r"\2")
+
+    # Remove prefixes from enum values, with a specific case for ImGui,
+    # which defines private enums which may extend the public ones:
+    #     enum ImGuiMyFlags_ { ImGuiMyFlags_None = 0,...};  enum ImGuiMyFlagsPrivate_ { ImGuiMyFlags_PrivValue = ...};
+    options.enum_flag_remove_values_prefix = True
+    options.enum_flag_remove_values_prefix_group_private = True
 
     options.python_max_line_length = (
         -1
@@ -346,6 +356,7 @@ def litgen_options_imgui(
             r"^ImBitArray",
             r"::STB_",
             r"ImGuiStoragePair",
+            r"^ImFileHandle$",
         ]
     )
 

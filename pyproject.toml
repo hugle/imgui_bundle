@@ -1,6 +1,12 @@
 [build-system]
-requires = ["scikit-build-core>=0.3.3", "pybind11"]
+requires = ["scikit-build-core>=0.9.1", "pybind11"]
 build-backend = "scikit_build_core.build"
+
+# To bebug build backend, replace by:
+# cf https://peps.python.org/pep-0517/#in-tree-build-backends
+#    requires = ["pybind11", "packaging", "pathspec"]
+#    build-backend = "scikit_build_core.build"
+#    backend-path = ["_backends/scikit-build-core/src/"]
 
 [project]
 name = "imgui-bundle"
@@ -58,6 +64,11 @@ wheel.packages = ["bindings/imgui_bundle"]
 #                  "bindings/imgui_bundle/imguizmo.pyi",
 #                  "bindings/imgui_bundle/nanovg.pyi",
 #                 ]
+
+# cmake.version = ">=3.26.1"
+# cmake.verbose = true
+# logging.level = "INFO"
+
 
 [tool.isort]
 profile = "black"

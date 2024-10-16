@@ -1,5 +1,18 @@
 Version numbers are synced between hello_imgui and imgui_bundle.
 
+# v1.5.xxx
+
+### ImmVision
+- **Breaking Change - October 2024**: Color Order Must Be Set
+  ImmVision now requires you to explicitly set the color order (RGB or BGR) at the start of your program.
+  To configure the color order, you must call one of the following **once** before displaying images:
+  - In C++: `ImmVision::UseRgbColorOrder()` or `ImmVision::UseBgrColorOrder()`
+  - In Python: `immvision.use_rgb_color_order()` or `immvision.use_bgr_color_order()`
+  - To enforce a temporary color order, use `ImmVision::PushColorOrderBgr/Rgb()` and `ImmVision::PopColorOrder()`.
+  This change ensures that you are explicitly aware of the color order used throughout your program.
+  If the color order is not configured, an error will be thrown when attempting to display images.
+  Note: The `IsColorOrderBGR` member in `ImageParams` and the corresponding `isBgrOrBgra` parameter in `ImageDisplay` have been **removed**.
+
 # v1.5.0
 
 ### ImGui:

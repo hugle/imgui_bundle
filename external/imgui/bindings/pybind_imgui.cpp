@@ -2955,12 +2955,12 @@ void py_init_module_imgui_main(py::module& m)
         .value("reserved_for_mod_alt", ImGuiKey_ReservedForModAlt, "")
         .value("reserved_for_mod_super", ImGuiKey_ReservedForModSuper, "")
         .value("count", ImGuiKey_COUNT, "")
-        .value("im_gui_mod_none", ImGuiMod_None, "")
-        .value("im_gui_mod_ctrl", ImGuiMod_Ctrl, "Ctrl (non-macOS), Cmd (macOS)")
-        .value("im_gui_mod_shift", ImGuiMod_Shift, "Shift")
-        .value("im_gui_mod_alt", ImGuiMod_Alt, "Option/Menu")
-        .value("im_gui_mod_super", ImGuiMod_Super, "Windows/Super (non-macOS), Ctrl (macOS)")
-        .value("im_gui_mod_mask_", ImGuiMod_Mask_, "4-bits")
+        .value("mod_none", ImGuiMod_None, "")
+        .value("mod_ctrl", ImGuiMod_Ctrl, "Ctrl (non-macOS), Cmd (macOS)")
+        .value("mod_shift", ImGuiMod_Shift, "Shift")
+        .value("mod_alt", ImGuiMod_Alt, "Option/Menu")
+        .value("mod_super", ImGuiMod_Super, "Windows/Super (non-macOS), Ctrl (macOS)")
+        .value("mod_mask_", ImGuiMod_Mask_, "4-bits")
         .value("named_key_begin", ImGuiKey_NamedKey_BEGIN, "")
         .value("named_key_end", ImGuiKey_NamedKey_END, "")
         .value("named_key_count", ImGuiKey_NamedKey_COUNT, "");
@@ -6417,10 +6417,19 @@ void py_init_module_imgui_main(py::module& m)
         .def_readwrite("y0", &ImFontGlyph::Y0, "Glyph corners")
         .def_readwrite("x1", &ImFontGlyph::X1, "Glyph corners")
         .def_readwrite("y1", &ImFontGlyph::Y1, "Glyph corners")
-        .def_readwrite("u0", &ImFontGlyph::U0, "Texture coordinates")
-        .def_readwrite("v0", &ImFontGlyph::V0, "Texture coordinates")
-        .def_readwrite("u1", &ImFontGlyph::U1, "Texture coordinates")
-        .def_readwrite("v1", &ImFontGlyph::V1, "Texture coordinates")
+        .def_readwrite("u0", &ImFontGlyph::U0, "")
+        .def_readwrite("v0", &ImFontGlyph::V0, "")
+        .def_readwrite("u1", &ImFontGlyph::U1, "")
+        .def_readwrite("v1", &ImFontGlyph::V1, "")
+        // #ifdef IMGUI_BUNDLE_PYTHON_API
+        //
+        .def("is_colored",
+            &ImFontGlyph::isColored, "(private API)")
+        .def("is_visible",
+            &ImFontGlyph::isVisible, "(private API)")
+        .def("get_codepoint",
+            &ImFontGlyph::getCodepoint, "(private API)")
+        // #endif
         ;
 
 
@@ -6686,8 +6695,11 @@ void py_init_module_imgui_main(py::module& m)
         py::class_<ImGuiPlatformIO>
             (m, "PlatformIO", "Access via ImGui::GetPlatformIO()")
         .def(py::init<>())
-        .def_readwrite("platform_clipboard_user_data", &ImGuiPlatformIO::Platform_ClipboardUserData, "")
-        .def_readwrite("platform_open_in_shell_user_data", &ImGuiPlatformIO::Platform_OpenInShellUserData, "")
+        .def_readwrite("platform_get_clipboard_text_fn", &ImGuiPlatformIO::Platform_GetClipboardTextFn, "")
+        .def_readwrite("platform_set_clipboard_text_fn", &ImGuiPlatformIO::Platform_SetClipboardTextFn, "")
+        .def_readwrite("platform_clipboard_user_data", &ImGuiPlatformIO::Platform_ClipboardUserData, "[/ADAPT_IMGUI_BUNDLE]")
+        .def_readwrite("platform_open_in_shell_fn", &ImGuiPlatformIO::Platform_OpenInShellFn, " Optional: Open link/folder/file in OS Shell\n (default to use ShellExecuteA() on Windows, system() on Linux/Mac)\n [ADAPT_IMGUI_BUNDLE]\nbool        (*Platform_OpenInShellFn)(ImGuiContext* ctx, const char* path);")
+        .def_readwrite("platform_open_in_shell_user_data", &ImGuiPlatformIO::Platform_OpenInShellUserData, "[/ADAPT_IMGUI_BUNDLE]")
         .def_readwrite("platform_ime_user_data", &ImGuiPlatformIO::Platform_ImeUserData, "")
         .def_readwrite("platform_locale_decimal_point", &ImGuiPlatformIO::Platform_LocaleDecimalPoint, "'.'")
         .def_readwrite("monitors", &ImGuiPlatformIO::Monitors, " (Optional) Monitor list\n - Updated by: app/backend. Update every frame to dynamically support changing monitor or DPI configuration.\n - Used by: dear imgui to query DPI info, clamp popups/tooltips within same monitor and not have them straddle monitors.")

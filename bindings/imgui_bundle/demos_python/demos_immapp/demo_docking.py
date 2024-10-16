@@ -161,31 +161,35 @@ def demo_hide_window(app_state: AppState):
             hello_imgui.get_runner_params().app_window_params.hidden = False
 
 
-# Display a button that will show an additional window
+# Display a button that will add another dockable window during execution
 def demo_show_additional_window(app_state: AppState):
-    # Notes:
-    #     - it is *not* possible to modify the content of the vector runnerParams.dockingParams.dockableWindows
-    #       from the code inside a window's `GuiFunction` (since this GuiFunction will be called while iterating
-    #       on this vector!)
-    #     - there are two ways to dynamically add windows:
-    #           * either make them initially invisible, and exclude them from the view menu (such as shown here)
-    #           * or modify runnerParams.dockingParams.dockableWindows inside the callback RunnerCallbacks.PreNewFrame
-    window_name = "Additional Window"
+    # In order to add a dockable window during execution, you should use
+    #     hello_imgui.add_dockable_window()
+    # Note: you should not modify manually the content of runnerParams.docking_params.dockable_windows
+    #       (since HelloImGui is constantly looping on it)
 
     imgui.push_font(app_state.title_font)
     imgui.text("Dynamically add window")
     imgui.pop_font()
 
+    window_name = "Additional Window"
     if imgui.button("Show additional window"):
-        runner_params = hello_imgui.get_runner_params()
-        additional_window_ptr = runner_params.docking_params.dockable_window_of_name(
-            window_name
+        additional_window = hello_imgui.DockableWindow()
+        additional_window.label = window_name
+        additional_window.include_in_view_menu = False  # this window is not shown in the view menu,
+        additional_window.remember_is_visible = False  # its visibility is not saved in the settings file,
+        additional_window.dock_space_name = "MiscSpace"  # when shown, it will appear in MiscSpace.
+        additional_window.gui_function = lambda: imgui.text("This is the additional window")
+        hello_imgui.add_dockable_window(
+            additional_window,
+            force_dockspace=False  # means that the window will be docked to the last space it was docked to
+                                   # i.e. dock_space_name is ignored if the user previously moved the window to another space
         )
-        if additional_window_ptr:
-            # additional_window_ptr.include_in_view_menu = True
-            additional_window_ptr.is_visible = True
-    if imgui.is_item_hovered():
-        imgui.set_tooltip("By clicking this button, you can show an additional window")
+    imgui.set_item_tooltip("By clicking this button, you can show an additional window")
+
+    if imgui.button("Remove additional window"):
+        hello_imgui.remove_dockable_window(window_name)
+    imgui.set_item_tooltip("By clicking this button, you can remove the additional window")
 
 
 def demo_basic_widgets(app_state: AppState):
@@ -725,20 +729,6 @@ def create_dockable_windows(app_state: AppState) -> List[hello_imgui.DockableWin
     dear_imgui_demo_window.imgui_window_flags = imgui.WindowFlags_.menu_bar
     dear_imgui_demo_window.gui_function = imgui.show_demo_window  # type: ignore
 
-    # additional_window is initially not visible (and not mentioned in the view menu).
-    # it will be opened only if the user chooses to display it
-    additional_window = hello_imgui.DockableWindow()
-    additional_window.label = "Additional Window"
-    additional_window.is_visible = False  # this window is initially hidden,
-    additional_window.include_in_view_menu = False  # it is not shown in the view menu,
-    additional_window.remember_is_visible = (
-        False  # its visibility is not saved in the settings file,
-    )
-    additional_window.dock_space_name = (
-        "MiscSpace"  # when shown, it will appear in MiscSpace.
-    )
-    additional_window.gui_function = lambda: imgui.text("This is the additional window")
-
     # alternativeThemeWindow
     alternative_theme_window = hello_imgui.DockableWindow()
     # Since this window applies a theme, We need to call "imgui.begin" ourselves so
@@ -753,7 +743,6 @@ def create_dockable_windows(app_state: AppState) -> List[hello_imgui.DockableWin
         layout_customization_window,
         logs_window,
         dear_imgui_demo_window,
-        additional_window,
         alternative_theme_window,
     ]
     return dockable_windows
@@ -788,6 +777,27 @@ def create_alternative_layouts(app_state: AppState) -> List[hello_imgui.DockingP
     tabs_layout.docking_splits = []
 
     return [alternative_layout, tabs_layout]
+
+
+##########################################################################
+#    Define the app initial theme
+##########################################################################
+def setup_my_theme():
+    """Example of theme customization at App startup
+    This function is called in the callback `setup_imgui_style` in order to apply a custom theme:
+        runner_params.callbacks.setup_imgui_style = setup_my_theme()
+    """
+    # Apply default style
+    hello_imgui.imgui_default_settings.setup_default_imgui_style()
+    # Create a tweaked theme
+    tweaked_theme = hello_imgui.ImGuiTweakedTheme()
+    tweaked_theme.theme = hello_imgui.ImGuiTheme_.material_flat
+    tweaked_theme.tweaks.rounding = 10.0
+    # Apply the tweaked theme
+    hello_imgui.apply_tweaked_theme(tweaked_theme)  # Note: you can also push/pop the theme in order to apply it only to a specific part of the Gui:  hello_imgui.push_tweaked_theme(tweaked_theme) / hello_imgui.pop_tweaked_theme()
+    # Then apply further modifications to ImGui style
+    imgui.get_style().item_spacing = (6, 4)  # Reduce spacing between items ((8, 4) by default)
+    imgui.get_style().set_color_(imgui.Col_.text, ImVec4(0.8, 0.8, 0.85, 1.0))  # Change text color
 
 
 ##########################################################################
@@ -872,18 +882,8 @@ def main():
     runner_params.callbacks.post_init = lambda: load_my_app_settings(app_state)
     runner_params.callbacks.before_exit = lambda: save_my_app_settings(app_state)
 
-    #
     # Change style
-    #
-    # 1. Change theme
-    tweaked_theme = runner_params.imgui_window_params.tweaked_theme
-    tweaked_theme.theme = hello_imgui.ImGuiTheme_.material_flat
-    tweaked_theme.tweaks.rounding = 10.0
-    # 2. Customize ImGui style at startup
-    def setup_imgui_style():
-        # Reduce spacing between items ((8, 4) by default)
-        imgui.get_style().item_spacing = (6, 4)
-    runner_params.callbacks.setup_imgui_style = setup_imgui_style
+    runner_params.callbacks.setup_imgui_style = setup_my_theme
 
     #
     # Part 2: Define the application layout and windows

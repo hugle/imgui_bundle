@@ -373,7 +373,12 @@ INDEX_SIZE: int
 #
 # [/ADAPT_IMGUI_BUNDLE]
 
-#
+# [ADAPT_IMGUI_BUNDLE] utilities
+# - std::function: switches between function pointer and std::function
+# - std::string: switches between const char* and std::string
+# - BundleHybridToChar: converts std::string to const char*
+# [/ADAPT_IMGUI_BUNDLE] utilities
+
 #
 # Index of this file:
 # // [SECTION] Header mess
@@ -4091,17 +4096,17 @@ class Key(enum.Enum):
     #   backends tend to interfere and break that equivalence. The safer decision is to relay that ambiguity down to the end-user...
     # - On macOS, we swap Cmd(Super) and Ctrl keys at the time of the io.AddKeyEvent() call.
     # ImGuiMod_None                   = 0,    /* original C++ signature */
-    im_gui_mod_none = enum.auto()  # (= 0)
+    mod_none = enum.auto()  # (= 0)
     # ImGuiMod_Ctrl                   = 1 << 12,     /* original C++ signature */
-    im_gui_mod_ctrl = enum.auto()  # (= 1 << 12)  # Ctrl (non-macOS), Cmd (macOS)
+    mod_ctrl = enum.auto()  # (= 1 << 12)  # Ctrl (non-macOS), Cmd (macOS)
     # ImGuiMod_Shift                  = 1 << 13,     /* original C++ signature */
-    im_gui_mod_shift = enum.auto()  # (= 1 << 13)  # Shift
+    mod_shift = enum.auto()  # (= 1 << 13)  # Shift
     # ImGuiMod_Alt                    = 1 << 14,     /* original C++ signature */
-    im_gui_mod_alt = enum.auto()  # (= 1 << 14)  # Option/Menu
+    mod_alt = enum.auto()  # (= 1 << 14)  # Option/Menu
     # ImGuiMod_Super                  = 1 << 15,     /* original C++ signature */
-    im_gui_mod_super = enum.auto()  # (= 1 << 15)  # Windows/Super (non-macOS), Ctrl (macOS)
+    mod_super = enum.auto()  # (= 1 << 15)  # Windows/Super (non-macOS), Ctrl (macOS)
     # ImGuiMod_Mask_                  = 0xF000,      /* original C++ signature */
-    im_gui_mod_mask_ = enum.auto()  # (= 0xF000)  # 4-bits
+    mod_mask_ = enum.auto()  # (= 0xF000)  # 4-bits
 
     # [Internal] Prior to 1.87 we required user to fill io.KeysDown[512] using their own native index + the io.KeyMap[] array.
     # We are ditching this method but keeping a legacy path for user code doing e.g. IsKeyPressed(MY_NATIVE_KEY_CODE)
@@ -10229,13 +10234,32 @@ class ImFontGlyph:
     # Y1;    /* original C++ signature */
     y1: float  # Glyph corners
     # float           U0,     /* original C++ signature */
-    u0: float  # Texture coordinates
+    u0: float
     # V0,     /* original C++ signature */
-    v0: float  # Texture coordinates
+    v0: float
     # U1,     /* original C++ signature */
-    u1: float  # Texture coordinates
+    u1: float
     # V1;    /* original C++ signature */
-    v1: float  # Texture coordinates
+    v1: float
+    # Texture coordinates
+
+    #                 #ifdef IMGUI_BUNDLE_PYTHON_API
+    #
+    # [ADAPT_IMGUI_BUNDLE]
+    # bool isColored() const { return Colored != 0; }    /* original C++ signature */
+    def is_colored(self) -> bool:
+        """(private API)"""
+        pass
+    # bool isVisible() const { return Visible != 0; }    /* original C++ signature */
+    def is_visible(self) -> bool:
+        """(private API)"""
+        pass
+    # unsigned int getCodepoint() const { return Codepoint; }    /* original C++ signature */
+    def get_codepoint(self) -> int:
+        """(private API)"""
+        pass
+    # [/ADAPT_IMGUI_BUNDLE]
+    #                 #endif
     # ImFontGlyph(float AdvanceX = float(), float X0 = float(), float Y0 = float(), float X1 = float(), float Y1 = float(), float U0 = float(), float V0 = float(), float U1 = float(), float V1 = float());    /* original C++ signature */
     def __init__(
         self,
@@ -10889,10 +10913,25 @@ class PlatformIO:
 
     # Optional: Access OS clipboard
     # (default to use native Win32 clipboard on Windows, otherwise uses a private clipboard. Override to access OS clipboard on other architectures)
+    # [ADAPT_IMGUI_BUNDLE]
+    # const char* (*Platform_GetClipboardTextFn)(ImGuiContext* ctx);
+    # None        (*Platform_SetClipboardTextFn)(ImGuiContext* ctx, const char* text);
+    # std::function<std::string(ImGuiContext*)> Platform_GetClipboardTextFn;    /* original C++ signature */
+    platform_get_clipboard_text_fn: Callable[[Context], str]
+    # std::function<void(ImGuiContext*, const char*)> Platform_SetClipboardTextFn;    /* original C++ signature */
+    platform_set_clipboard_text_fn: Callable[[Context, str], None]
     # void*       Platform_ClipboardUserData;    /* original C++ signature */
+    # [/ADAPT_IMGUI_BUNDLE]
     platform_clipboard_user_data: Any
 
+    # std::function<bool(ImGuiContext*, const char*)> Platform_OpenInShellFn;    /* original C++ signature */
+    # Optional: Open link/folder/file in OS Shell
+    # (default to use ShellExecuteA() on Windows, system() on Linux/Mac)
+    # [ADAPT_IMGUI_BUNDLE]
+    # bool        (*Platform_OpenInShellFn)(ImGuiContext* ctx, const char* path);
+    platform_open_in_shell_fn: Callable[[Context, str], bool]
     # void*       Platform_OpenInShellUserData;    /* original C++ signature */
+    # [/ADAPT_IMGUI_BUNDLE]
     platform_open_in_shell_user_data: Any
 
     # void*       Platform_ImeUserData;    /* original C++ signature */

@@ -2122,7 +2122,7 @@ class DockableWindow:
     # --------------- Main params -------------------
 
     # std::string label;    /* original C++ signature */
-    # `label`: _string_. Title of the window.
+    # `label`: _string_. Title of the window. It should be unique! Use "##" to add a unique suffix if needed.
     label: str
 
     # DockSpaceName dockSpaceName;    /* original C++ signature */
@@ -2306,11 +2306,7 @@ class DockingParams:
     # std::optional<ImGuiID> dockSpaceIdFromName(const std::string& dockSpaceName);    /* original C++ signature */
     def dock_space_id_from_name(self, dock_space_name: str) -> Optional[ImGuiID]:
         """`optional<ImGuiID> dockSpaceIdFromName(const std::string& dockSpaceName)`:
-        may return the ImGuiID corresponding to the dockspace with this name.
-        **Warning**: this will work reliably only if
-            layoutCondition = DockingLayoutCondition::ApplicationStart.
-        In other cases, the ID may be cached by ImGui himself at the first run,
-        and HelloImGui will *not* know it on subsequent runs!
+        returns the ImGuiID corresponding to the dockspace with this name
         """
         pass
     # DockingParams(std::vector<DockingSplit> dockingSplits = std::vector<DockingSplit>(), std::vector<DockableWindow> dockableWindows = std::vector<DockableWindow>(), std::string layoutName = "Default", ImGuiDockNodeFlags mainDockSpaceNodeFlags = ImGuiDockNodeFlags_PassthruCentralNode, DockingLayoutCondition layoutCondition = DockingLayoutCondition::FirstUseEver, bool layoutReset = false);    /* original C++ signature */
@@ -3292,6 +3288,23 @@ def current_layout_name() -> str:
     """`CurrentLayoutName()`: returns the name of the current layout"""
     pass
 
+# void AddDockableWindow(const DockableWindow& dockableWindow, bool forceDockspace = false);    /* original C++ signature */
+def add_dockable_window(
+    dockable_window: DockableWindow, force_dockspace: bool = False
+) -> None:
+    """`AddDockableWindow()`: will add a dockable window to the current layout.
+    Will dock the window to the dockspace it belongs to if forceDockspace is True,
+    otherwise will dock it to the last space it was docked to (using saved settings)
+    """
+    pass
+
+# void RemoveDockableWindow(const std::string& dockableWindowName);    /* original C++ signature */
+def remove_dockable_window(dockable_window_name: str) -> None:
+    """`RemoveDockableWindow()`: will remove a dockable window from the current layout.
+    (dockableWindowName is the label of the window, as provided in the DockableWindow struct)
+    """
+    pass
+
 # @@md
 
 # ============================== User prefs Utils =============================
@@ -3378,4 +3391,8 @@ class imgui_default_settings:  # Proxy class that introduces typings for the *su
 
 def final_app_window_screenshot() -> np.ndarray:
     """Return a screenshot of the final screen of the last (exited) app"""
+    pass
+
+def final_app_window_screenshot_framebuffer_scale() -> float:
+    """Returns the scale of the framebuffer used to take the screenshot"""
     pass
