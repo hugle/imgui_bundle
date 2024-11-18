@@ -65,7 +65,7 @@ wheel.packages = ["bindings/imgui_bundle"]
 #                  "bindings/imgui_bundle/nanovg.pyi",
 #                 ]
 
-# cmake.version = ">=3.26.1"
+cmake.version = ">=3.26.1"
 # cmake.verbose = true
 # logging.level = "INFO"
 
