@@ -4,7 +4,7 @@
 # ruff: noqa: B008, F821
 from typing import Tuple, Optional, Callable, List, overload, Any
 import enum
-from imgui_bundle import imgui_md, hello_imgui, ImVec2
+from imgui_bundle import imgui_md, hello_imgui, ImVec2, ImVec2Like
 from imgui_bundle.imgui_node_editor import (
     Config as NodeEditorConfig,
     EditorContext as NodeEditorContext,
@@ -28,8 +28,12 @@ DefaultScreenSize = (800, 600)
 # #ifdef IMGUI_BUNDLE_WITH_IMPLOT_AND_IMGUI_NODE_EDITOR
 #
 def begin_plot_in_node_editor(
-    title_id: str, size: ImVec2 = ImVec2(-1, 0), flags: ImPlotFlags = 0
+    title_id: str, size: Optional[ImVec2Like] = None, flags: ImPlotFlags = 0
 ) -> bool:
+    """---
+    Python bindings defaults:
+        If size is None, then its default value will be: ImVec2(-1,0)
+    """
     pass
 
 def end_plot_in_node_editor() -> None:
@@ -37,7 +41,7 @@ def end_plot_in_node_editor() -> None:
 
 def show_resizable_plot_in_node_editor(
     title_id: str,
-    size_pixels: ImVec2,
+    size_pixels: ImVec2Like,
     plot_function: VoidFunction,
     flags: ImPlotFlags = 0,
     resize_handle_size_em: float = 1.0,
@@ -49,7 +53,7 @@ def show_resizable_plot_in_node_editor(
 
 def show_resizable_plot_in_node_editor_em(
     title_id: str,
-    size_em: ImVec2,
+    size_em: ImVec2Like,
     plot_function: VoidFunction,
     flags: ImPlotFlags = 0,
     resize_handle_size_em: float = 1.0,
@@ -154,15 +158,23 @@ class AddOnsParams:
 @overload
 def run(
     runner_params: HelloImGui.RunnerParams,
-    add_ons_params: AddOnsParams = AddOnsParams(),
+    add_ons_params: Optional[AddOnsParams] = None,
 ) -> None:
+    """---
+    Python bindings defaults:
+        If addOnsParams is None, then its default value will be: AddOnsParams()
+    """
     pass
 
 @overload
 def run(
     simple_params: HelloImGui.SimpleRunnerParams,
-    add_ons_params: AddOnsParams = AddOnsParams(),
+    add_ons_params: Optional[AddOnsParams] = None,
 ) -> None:
+    """---
+    Python bindings defaults:
+        If addOnsParams is None, then its default value will be: AddOnsParams()
+    """
     pass
 
 @overload
@@ -171,7 +183,7 @@ def run(
     window_title: str = "",
     window_size_auto: bool = False,
     window_restore_previous_geometry: bool = False,
-    window_size: ScreenSize = DefaultWindowSize,
+    window_size: Optional[ScreenSize] = None,
     fps_idle: float = 10.0,
     with_implot: bool = False,
     with_markdown: bool = False,
@@ -201,6 +213,9 @@ def run(
            (i.e. required fonts will be loaded)
          - `with_node_editor` / `with_node_editor_config`: if specified, then a context for imgui_node_editor
            will be created automatically.
+    ---
+    Python bindings defaults:
+        If windowSize is None, then its default value will be: DefaultWindowSize
     """
     pass
 
@@ -209,7 +224,7 @@ def run_with_markdown(
     window_title: str = "",
     window_size_auto: bool = False,
     window_restore_previous_geometry: bool = False,
-    window_size: ScreenSize = DefaultWindowSize,
+    window_size: Optional[ScreenSize] = None,
     fps_idle: float = 10.0,
     with_implot: bool = False,
     with_node_editor: bool = False,
@@ -217,7 +232,11 @@ def run_with_markdown(
     with_node_editor_config: Optional[NodeEditorConfig] = None,
     with_markdown_options: Optional[ImGuiMd.MarkdownOptions] = None,
 ) -> None:
-    """Run an application with markdown"""
+    """Run an application with markdown
+    ---
+    Python bindings defaults:
+        If windowSize is None, then its default value will be: DefaultWindowSize
+    """
     pass
 
 # ///////////////////////////////////////////////////////////////////////////////////////
@@ -247,10 +266,10 @@ def em_to_vec2(x: float, y: float) -> ImVec2:
     pass
 
 @overload
-def em_to_vec2(v: ImVec2) -> ImVec2:
+def em_to_vec2(v: ImVec2Like) -> ImVec2:
     pass
 
-def pixels_to_em(pixels: ImVec2) -> ImVec2:
+def pixels_to_em(pixels: ImVec2Like) -> ImVec2:
     """PixelsToEm() converts a Vec2 in pixels to a Vec2 in em"""
     pass
 
@@ -284,8 +303,87 @@ def delete_node_editor_settings(runner_params: HelloImGui.RunnerParams) -> None:
     pass
 
 # #endif
-# }
+#
 
+# =========================== HelloImGui::ManualRender ==================================
+# @@md#HelloImGui::ManualRender
+
+# @@md
+
+# <submodule manual_render>
+class manual_render:  # Proxy class that introduces typings for the *submodule* manual_render
+    pass  # (This corresponds to a C++ namespace. All method are static!)
+    """ namespace ManualRender"""
+    # Immapp::ManualRender is a namespace that groups functions, allowing fine-grained control over the rendering process:
+    # - It is customizable like Immapp::Run: initialize it with `RunnerParams` and `AddOnsParams`.
+    # - `ManualRender::Render()` will render the application for one frame:
+    # - Ensure that `ManualRender::Render()` is triggered regularly (e.g., through a loop or other mechanism)
+    #   to maintain responsiveness. This method must be called on the main thread.
+
+    @staticmethod
+    def setup_from_runner_params(
+        runner_params: HelloImGui.RunnerParams,
+        add_ons_params: Optional[AddOnsParams] = None,
+    ) -> None:
+        """Initializes the rendering with the full customizable `RunnerParams`.
+         This will initialize the platform backend (SDL, Glfw, etc.) and the rendering backend (OpenGL, Vulkan, etc.).
+         A distinct copy of `RunnerParams` is stored internally.
+        ---
+        Python bindings defaults:
+            If addOnsParams is None, then its default value will be: AddOnsParams()
+        """
+        pass
+
+    @staticmethod
+    def setup_from_simple_runner_params(
+        simple_params: HelloImGui.SimpleRunnerParams,
+        add_ons_params: Optional[AddOnsParams] = None,
+    ) -> None:
+        """Initializes the rendering with `SimpleRunnerParams`.
+         This will initialize the platform backend (SDL, Glfw, etc.) and the rendering backend (OpenGL, Vulkan, etc.).
+        ---
+        Python bindings defaults:
+            If addOnsParams is None, then its default value will be: AddOnsParams()
+        """
+        pass
+
+    @staticmethod
+    def setup_from_gui_function(
+        gui_function: VoidFunction,
+        window_title: str = "",
+        window_size_auto: bool = False,
+        window_restore_previous_geometry: bool = False,
+        window_size: Optional[ScreenSize] = None,
+        fps_idle: float = 10.0,
+        with_implot: bool = False,
+        with_markdown: bool = False,
+        with_node_editor: bool = False,
+        with_tex_inspect: bool = False,
+        with_node_editor_config: Optional[NodeEditorConfig] = None,
+        with_markdown_options: Optional[ImGuiMd.MarkdownOptions] = None,
+    ) -> None:
+        """Initializes the renderer with a simple GUI function and additional parameters.
+         This will initialize the platform backend (SDL, Glfw, etc.) and the rendering backend (OpenGL, Vulkan, etc.).
+        ---
+        Python bindings defaults:
+            If windowSize is None, then its default value will be: DefaultWindowSize
+        """
+        pass
+
+    @staticmethod
+    def render() -> None:
+        """Renders the current frame. Should be called regularly to maintain the application's responsiveness."""
+        pass
+
+    @staticmethod
+    def tear_down() -> None:
+        """Tears down the renderer and releases all associated resources.
+        This will release the platform backend (SDL, Glfw, etc.) and the rendering backend (OpenGL, Vulkan, etc.).
+        After calling `TearDown()`, the InitFromXXX can be called with new parameters.
+        """
+        pass
+
+# </submodule manual_render>
 ####################    </generated_from:runner.h>    ####################
 
 ####################    <generated_from:clock.h>    ####################

@@ -19,9 +19,12 @@ def main():
 
     # Configure options
     options = litgen.LitgenOptions()
+    options.use_nanobind()
+    options.fn_params_type_replacements.add_replacements([(r"\bImVec2\b", "ImVec2Like"), (r"\bImVec4\b", "ImVec4Like")])
+
     options.namespaces_root = ["ImSpinner"]
     options.srcmlcpp_options.header_filter_acceptable__regex = "_H_$"
-    options.fn_exclude_by_name__regex = "min_patched"
+    options.fn_exclude_by_name__regex = "min_patched|SpinnerCamera"
     options.srcmlcpp_options.ignored_warning_parts = [
         "Ignoring template function",
         "unhandled tag template",

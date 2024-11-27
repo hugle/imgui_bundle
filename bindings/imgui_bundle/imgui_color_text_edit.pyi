@@ -44,7 +44,7 @@ from __future__ import annotations
 from typing import List, Any, Dict, Set, overload, Optional
 import enum
 
-from imgui_bundle.imgui import ImVec2, ImVec4, ImU32
+from imgui_bundle.imgui import ImVec4, ImU32, ImVec2Like
 
 String = str
 Identifiers = Dict[
@@ -148,10 +148,14 @@ class TextEditor:
         m_declaration: str
         def __init__(
             self,
-            m_location: Coordinates = Coordinates(),
+            m_location: Optional[Coordinates] = None,
             m_declaration: str = ""
             ) -> None:
-            """Auto-generated default constructor with named params"""
+            """Auto-generated default constructor with named params
+            ---
+            Python bindings defaults:
+                If mLocation is None, then its default value will be: TextEditor.Coordinates()
+            """
             pass
 
 
@@ -224,11 +228,17 @@ class TextEditor:
         def __init__(
             self,
             m_text: str = "",
-            m_start: Coordinates = Coordinates(),
-            m_end: Coordinates = Coordinates(),
+            m_start: Optional[Coordinates] = None,
+            m_end: Optional[Coordinates] = None,
             m_type: UndoOperationType = UndoOperationType()
             ) -> None:
-            """Auto-generated default constructor with named params"""
+            """Auto-generated default constructor with named params
+            ---
+            Python bindings defaults:
+                If any of the params below is None, then its default value below will be used:
+                    mStart: TextEditor.Coordinates()
+                    mEnd: TextEditor.Coordinates()
+            """
             pass
 
     def __init__(self) -> None:
@@ -257,9 +267,13 @@ class TextEditor:
         self,
         a_title: str,
         a_parent_is_focused: bool = False,
-        a_size: ImVec2 = ImVec2(),
+        a_size: Optional[ImVec2Like] = None,
         a_border: bool = False
         ) -> bool:
+        """---
+        Python bindings defaults:
+            If aSize is None, then its default value will be: ImVec2()
+        """
         pass
     def set_text(self, a_text: str) -> None:
         pass

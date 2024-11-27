@@ -14,7 +14,7 @@ from . import portable_file_dialogs as portable_file_dialogs
 # Note: to enable font awesome 6:
 #     runner_params.callbacks.default_icon_font = hello_imgui.DefaultIconFont.font_awesome6
 
-from .imgui import ImVec2 as ImVec2, ImVec4 as ImVec4, ImColor as ImColor
+from .imgui import ImVec2 as ImVec2, ImVec4 as ImVec4, ImColor as ImColor, ImVec2Like as ImVec2Like
 from .imgui_pydantic import ImVec2_Pydantic as ImVec2_Pydantic, ImVec4_Pydantic as ImVec4_Pydantic, ImColor_Pydantic as ImColor_Pydantic
 from .im_col32 import IM_COL32 as IM_COL32
 

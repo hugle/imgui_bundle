@@ -775,11 +775,15 @@ class TestOutput:
     def __init__(
         self,
         status: TestStatus = TestStatus_Unknown,
-        log: TestLog = TestLog(),
+        log: Optional[TestLog] = None,
         start_time: ImU64 = 0,
         end_time: ImU64 = 0,
     ) -> None:
-        """Auto-generated default constructor with named params"""
+        """Auto-generated default constructor with named params
+        ---
+        Python bindings defaults:
+            If Log is None, then its default value will be: TestLog()
+        """
         pass
 
 class Test:
@@ -1423,18 +1427,22 @@ class TestContext:
     def window_move(
         self,
         window_ref: Union[TestRef, str],
-        pos: ImVec2,
-        pivot: ImVec2 = ImVec2(0.0, 0.0),
+        pos: ImVec2Like,
+        pivot: Optional[ImVec2Like] = None,
         flags: TestOpFlags = TestOpFlags_None,
     ) -> None:
-        """(private API)"""
+        """---
+        Python bindings defaults:
+            If pivot is None, then its default value will be: ImVec2(0.0, 0.0)
+        (private API)
+        """
         pass
     # void        WindowResize(ImGuiTestRef window_ref, ImVec2 sz);    /* original C++ signature */
-    def window_resize(self, window_ref: Union[TestRef, str], sz: ImVec2) -> None:
+    def window_resize(self, window_ref: Union[TestRef, str], sz: ImVec2Like) -> None:
         """(private API)"""
         pass
     # bool        WindowTeleportToMakePosVisible(ImGuiTestRef window_ref, ImVec2 pos_in_window);    /* original C++ signature */
-    def window_teleport_to_make_pos_visible(self, window_ref: Union[TestRef, str], pos_in_window: ImVec2) -> bool:
+    def window_teleport_to_make_pos_visible(self, window_ref: Union[TestRef, str], pos_in_window: ImVec2Like) -> bool:
         """(private API)"""
         pass
     # ImGuiWindow*GetWindowByRef(ImGuiTestRef window_ref);    /* original C++ signature */
@@ -1545,11 +1553,11 @@ class TestContext:
         """(private API)"""
         pass
     # void        MouseMoveToPos(ImVec2 pos);    /* original C++ signature */
-    def mouse_move_to_pos(self, pos: ImVec2) -> None:
+    def mouse_move_to_pos(self, pos: ImVec2Like) -> None:
         """(private API)"""
         pass
     # void        MouseTeleportToPos(ImVec2 pos, ImGuiTestOpFlags flags = ImGuiTestOpFlags_None);    /* original C++ signature */
-    def mouse_teleport_to_pos(self, pos: ImVec2, flags: TestOpFlags = TestOpFlags_None) -> None:
+    def mouse_teleport_to_pos(self, pos: ImVec2Like, flags: TestOpFlags = TestOpFlags_None) -> None:
         """(private API)"""
         pass
     # void        MouseClick(ImGuiMouseButton button = 0);    /* original C++ signature */
@@ -1577,11 +1585,11 @@ class TestContext:
         """(private API)"""
         pass
     # void        MouseDragWithDelta(ImVec2 delta, ImGuiMouseButton button = 0);    /* original C++ signature */
-    def mouse_drag_with_delta(self, delta: ImVec2, button: MouseButton = 0) -> None:
+    def mouse_drag_with_delta(self, delta: ImVec2Like, button: MouseButton = 0) -> None:
         """(private API)"""
         pass
     # void        MouseWheel(ImVec2 delta);    /* original C++ signature */
-    def mouse_wheel(self, delta: ImVec2) -> None:
+    def mouse_wheel(self, delta: ImVec2Like) -> None:
         """(private API)"""
         pass
     # void        MouseWheelX(float dx) { MouseWheel(ImVec2(dx, 0.0f)); }    /* original C++ signature */
@@ -1601,11 +1609,11 @@ class TestContext:
         """(private API)"""
         pass
     # ImGuiWindow*FindHoveredWindowAtPos(const ImVec2& pos);    /* original C++ signature */
-    def find_hovered_window_at_pos(self, pos: ImVec2) -> Window:
+    def find_hovered_window_at_pos(self, pos: ImVec2Like) -> Window:
         """(private API)"""
         pass
     # bool        FindExistingVoidPosOnViewport(ImGuiViewport* viewport, ImVec2* out);    /* original C++ signature */
-    def find_existing_void_pos_on_viewport(self, viewport: Viewport, out: ImVec2) -> bool:
+    def find_existing_void_pos_on_viewport(self, viewport: Viewport, out: ImVec2Like) -> bool:
         """(private API)"""
         pass
     # Mouse inputs: Viewports
@@ -1908,7 +1916,7 @@ class TestContext:
         """(private API)"""
         pass
     # void        ItemDragWithDelta(ImGuiTestRef ref_src, ImVec2 pos_delta);    /* original C++ signature */
-    def item_drag_with_delta(self, ref_src: Union[TestRef, str], pos_delta: ImVec2) -> None:
+    def item_drag_with_delta(self, ref_src: Union[TestRef, str], pos_delta: ImVec2Like) -> None:
         """(private API)"""
         pass
     # Helpers for Tab Bars widgets
@@ -1992,11 +2000,15 @@ class TestContext:
         self,
         src_id: Union[TestRef, str],
         dst_id: Union[TestRef, str],
-        split_dir: Dir = Dir_None,
+        split_dir: Optional[Dir] = None,
         is_outer_docking: bool = False,
         flags: TestOpFlags = 0,
     ) -> None:
-        """(private API)"""
+        """---
+        Python bindings defaults:
+            If split_dir is None, then its default value will be: Dir_None
+        (private API)
+        """
         pass
     # void        UndockNode(ImGuiID dock_id);    /* original C++ signature */
     def undock_node(self, dock_id: ID) -> None:
@@ -2036,7 +2048,7 @@ class TestContext:
 
     # [Internal]
     # void        _MakeAimingSpaceOverPos(ImGuiViewport* viewport, ImGuiWindow* over_window, const ImVec2& over_pos);     /* original C++ signature */
-    def _make_aiming_space_over_pos(self, viewport: Viewport, over_window: Window, over_pos: ImVec2) -> None:
+    def _make_aiming_space_over_pos(self, viewport: Viewport, over_window: Window, over_pos: ImVec2Like) -> None:
         """(private API)
 
         Move windows covering 'window' at pos.
@@ -2052,7 +2064,7 @@ class TestContext:
     # ImGuiTestContext(ImGuiTestGenericVars GenericVars = ImGuiTestGenericVars(), ImGuiTestOpFlags OpFlags = ImGuiTestOpFlags_None, int PerfStressAmount = 0, int FrameCount = 0, int FirstTestFrameCount = 0, bool FirstGuiFrame = false, bool HasDock = false, ImGuiTestRunFlags RunFlags = ImGuiTestRunFlags_None, ImGuiTestActiveFunc ActiveFunc = ImGuiTestActiveFunc_None, double RunningTime = 0.0, int ActionDepth = 0, int CaptureCounter = 0, int ErrorCounter = 0, bool Abort = false, double PerfRefDt = -1.0, int PerfIterations = 400, ImGuiID RefID = 0, ImGuiID RefWindowID = 0, ImGuiInputSource InputMode = ImGuiInputSource_Mouse, ImVector<char> Clipboard = ImVector<char>(), ImVector<ImGuiWindow*> ForeignWindowsToHide = ImVector<ImGuiWindow*>(), ImGuiTestItemInfo DummyItemInfoNull = ImGuiTestItemInfo(), bool CachedLinesPrintedToTTY = false);    /* original C++ signature */
     def __init__(
         self,
-        generic_vars: TestGenericVars = TestGenericVars(),
+        generic_vars: Optional[TestGenericVars] = None,
         op_flags: TestOpFlags = TestOpFlags_None,
         perf_stress_amount: int = 0,
         frame_count: int = 0,
@@ -2070,13 +2082,22 @@ class TestContext:
         perf_iterations: int = 400,
         ref_id: ID = 0,
         ref_window_id: ID = 0,
-        input_mode: InputSource = InputSource_Mouse,
-        clipboard: ImVector_char = ImVector_char(),
-        foreign_windows_to_hide: ImVector_Window_ptr = ImVector_Window_ptr(),
-        dummy_item_info_null: TestItemInfo = TestItemInfo(),
+        input_mode: Optional[InputSource] = None,
+        clipboard: Optional[ImVector_int] = None,
+        foreign_windows_to_hide: Optional[ImVector_Window] = None,
+        dummy_item_info_null: Optional[TestItemInfo] = None,
         cached_lines_printed_to_tty: bool = False,
     ) -> None:
-        """Auto-generated default constructor with named params"""
+        """Auto-generated default constructor with named params
+        ---
+        Python bindings defaults:
+            If any of the params below is None, then its default value below will be used:
+                GenericVars: TestGenericVars()
+                InputMode: InputSource_Mouse
+                Clipboard: ImVector_char()
+                ForeignWindowsToHide: ImVector_Window_ptr()
+                DummyItemInfoNull: TestItemInfo()
+        """
         pass
 
 # -------------------------------------------------------------------------
@@ -2130,8 +2151,12 @@ class TestInfoTask:
     # Output
     result: TestItemInfo
     # ImGuiTestInfoTask(ImGuiID ID = 0, int FrameCount = -1, ImGuiTestItemInfo Result = ImGuiTestItemInfo());    /* original C++ signature */
-    def __init__(self, id_: ID = 0, frame_count: int = -1, result: TestItemInfo = TestItemInfo()) -> None:
-        """Auto-generated default constructor with named params"""
+    def __init__(self, id_: ID = 0, frame_count: int = -1, result: Optional[TestItemInfo] = None) -> None:
+        """Auto-generated default constructor with named params
+        ---
+        Python bindings defaults:
+            If Result is None, then its default value will be: TestItemInfo()
+        """
         pass
 
 class TestGatherTask:
@@ -2274,7 +2299,7 @@ class TestInput:
     #         return inp;
     #     }
     @staticmethod
-    def for_viewport_set_pos(viewport_id: ID, pos: ImVec2) -> TestInput:
+    def for_viewport_set_pos(viewport_id: ID, pos: ImVec2Like) -> TestInput:
         """(private API)"""
         pass
     # static ImGuiTestInput   ForViewportSetSize(ImGuiID viewport_id, const ImVec2& size)    /* original C++ signature */
@@ -2286,7 +2311,7 @@ class TestInput:
     #         return inp;
     #     }
     @staticmethod
-    def for_viewport_set_size(viewport_id: ID, size: ImVec2) -> TestInput:
+    def for_viewport_set_size(viewport_id: ID, size: ImVec2Like) -> TestInput:
         """(private API)"""
         pass
     # static ImGuiTestInput   ForViewportClose(ImGuiID viewport_id)    /* original C++ signature */
@@ -2304,13 +2329,19 @@ class TestInput:
     def __init__(
         self,
         type: TestInputType = TestInputType_None,
-        key_chord: KeyChord = Key_None,
+        key_chord: Optional[KeyChord] = None,
         char: ImWchar = 0,
         down: bool = False,
         viewport_id: ID = 0,
-        viewport_pos_size: ImVec2 = ImVec2(),
+        viewport_pos_size: Optional[ImVec2Like] = None,
     ) -> None:
-        """Auto-generated default constructor with named params"""
+        """Auto-generated default constructor with named params
+        ---
+        Python bindings defaults:
+            If any of the params below is None, then its default value below will be used:
+                KeyChord: Key_None
+                ViewportPosSize: ImVec2()
+        """
         pass
 
 class TestInputs:
@@ -2329,14 +2360,20 @@ class TestInputs:
     # ImGuiTestInputs(ImVec2 MousePosValue = ImVec2(), ImVec2 MouseWheel = ImVec2(), ImGuiID MouseHoveredViewport = 0, int MouseButtonsValue = 0x00, bool HostEscDown = false, float HostEscDownDuration = -1.0f);    /* original C++ signature */
     def __init__(
         self,
-        mouse_pos_value: ImVec2 = ImVec2(),
-        mouse_wheel: ImVec2 = ImVec2(),
+        mouse_pos_value: Optional[ImVec2Like] = None,
+        mouse_wheel: Optional[ImVec2Like] = None,
         mouse_hovered_viewport: ID = 0,
         mouse_buttons_value: int = 0x00,
         host_esc_down: bool = False,
         host_esc_down_duration: float = -1.0,
     ) -> None:
-        """Auto-generated default constructor with named params"""
+        """Auto-generated default constructor with named params
+        ---
+        Python bindings defaults:
+            If any of the params below is None, then its default value below will be used:
+                MousePosValue: ImVec2()
+                MouseWheel: ImVec2()
+        """
         pass
 
 class TestEngine:

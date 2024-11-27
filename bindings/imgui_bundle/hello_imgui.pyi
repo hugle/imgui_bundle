@@ -2,7 +2,7 @@
 https://github.com/pthom/hello_imgui
 """
 
-# ruff: noqa: F811, B008
+# ruff: noqa: F811, B008, F821
 from typing import List, Any, Callable, Tuple, Optional, overload, Dict
 import numpy as np
 import enum
@@ -11,6 +11,8 @@ from imgui_bundle.imgui.internal import DockNodeFlags_, DockNodeFlags
 from imgui_bundle.imgui import (
     ImVec2,
     ImVec4,
+    ImVec2Like,
+    ImVec4Like,
     ImFontConfig,
     ImFont,
     ImTextureID,
@@ -214,7 +216,7 @@ def em_to_vec2(x: float, y: float) -> ImVec2:
 
 # ImVec2 EmToVec2(ImVec2 v);    /* original C++ signature */
 @overload
-def em_to_vec2(v: ImVec2) -> ImVec2:
+def em_to_vec2(v: ImVec2Like) -> ImVec2:
     pass
 
 # float EmSize();    /* original C++ signature */
@@ -230,7 +232,7 @@ def em_size(nb_lines: float) -> float:
     pass
 
 # ImVec2 PixelsToEm(ImVec2 pixels);    /* original C++ signature */
-def pixels_to_em(pixels: ImVec2) -> ImVec2:
+def pixels_to_em(pixels: ImVec2Like) -> ImVec2:
     """__HelloImGui::PixelToEm()__ converts a Vec2 in pixels coord to a Vec2 in em units"""
     pass
 
@@ -515,7 +517,11 @@ def log_clear() -> None:
 
 # void LogGui(ImVec2 size=ImVec2(0.f, 0.f));    /* original C++ signature */
 # }
-def log_gui(size: ImVec2 = ImVec2(0.0, 0.0)) -> None:
+def log_gui(size: Optional[ImVec2Like] = None) -> None:
+    """---
+    Python bindings defaults:
+        If size is None, then its default value will be: ImVec2(0., 0.)
+    """
     pass
 
 # ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -548,14 +554,22 @@ def log_gui(size: ImVec2 = ImVec2(0.0, 0.0)) -> None:
 #                     const ImVec4& border_col = ImVec4(0,0,0,0));
 def image_from_asset(
     asset_path: str,
-    size: ImVec2 = ImVec2(0, 0),
-    uv0: ImVec2 = ImVec2(0, 0),
-    uv1: ImVec2 = ImVec2(1, 1),
-    tint_col: ImVec4 = ImVec4(1, 1, 1, 1),
-    border_col: ImVec4 = ImVec4(0, 0, 0, 0),
+    size: Optional[ImVec2Like] = None,
+    uv0: Optional[ImVec2Like] = None,
+    uv1: Optional[ImVec2Like] = None,
+    tint_col: Optional[ImVec4Like] = None,
+    border_col: Optional[ImVec4Like] = None,
 ) -> None:
     """`HelloImGui::ImageFromAsset(const char *assetPath, size, ...)`:
-    will display a static image from the assets.
+     will display a static image from the assets.
+    ---
+    Python bindings defaults:
+        If any of the params below is None, then its default value below will be used:
+            size: ImVec2(0, 0)
+            uv0: ImVec2(0, 0)
+            uv1: ImVec2(1,1)
+            tint_col: ImVec4(1,1,1,1)
+            border_col: ImVec4(0,0,0,0)
     """
     pass
 
@@ -566,15 +580,23 @@ def image_from_asset(
 #                           const ImVec4& tint_col = ImVec4(1,1,1,1));
 def image_button_from_asset(
     asset_path: str,
-    size: ImVec2 = ImVec2(0, 0),
-    uv0: ImVec2 = ImVec2(0, 0),
-    uv1: ImVec2 = ImVec2(1, 1),
+    size: Optional[ImVec2Like] = None,
+    uv0: Optional[ImVec2Like] = None,
+    uv1: Optional[ImVec2Like] = None,
     frame_padding: int = -1,
-    bg_col: ImVec4 = ImVec4(0, 0, 0, 0),
-    tint_col: ImVec4 = ImVec4(1, 1, 1, 1),
+    bg_col: Optional[ImVec4Like] = None,
+    tint_col: Optional[ImVec4Like] = None,
 ) -> bool:
     """`bool HelloImGui::ImageButtonFromAsset(const char *assetPath, size, ...)`:
-    will display a button using an image from the assets.
+     will display a button using an image from the assets.
+    ---
+    Python bindings defaults:
+        If any of the params below is None, then its default value below will be used:
+            size: ImVec2(0, 0)
+            uv0: ImVec2(0, 0)
+            uv1: ImVec2(1,1)
+            bg_col: ImVec4(0,0,0,0)
+            tint_col: ImVec4(1,1,1,1)
     """
     pass
 
@@ -603,9 +625,17 @@ class ImageAndSize:
     size: ImVec2 = ImVec2(0.0, 0.0)
     # ImageAndSize(ImTextureID textureId = ImTextureID(0), ImVec2 size = ImVec2(0.f, 0.f));    /* original C++ signature */
     def __init__(
-        self, texture_id: ImTextureID = ImTextureID(0), size: ImVec2 = ImVec2(0.0, 0.0)
+        self,
+        texture_id: Optional[ImTextureID] = None,
+        size: Optional[ImVec2Like] = None,
     ) -> None:
-        """Auto-generated default constructor with named params"""
+        """Auto-generated default constructor with named params
+        ---
+        Python bindings defaults:
+            If any of the params below is None, then its default value below will be used:
+                textureId: ImTextureID(0)
+                size: ImVec2(0., 0.)
+        """
         pass
 
 # ImageAndSize ImageAndSizeFromAsset(const char *assetPath);    /* original C++ signature */
@@ -613,7 +643,7 @@ def image_and_size_from_asset(asset_path: str) -> ImageAndSize:
     pass
 
 # ImVec2 ImageProportionalSize(const ImVec2& askedSize, const ImVec2& imageSize);    /* original C++ signature */
-def image_proportional_size(asked_size: ImVec2, image_size: ImVec2) -> ImVec2:
+def image_proportional_size(asked_size: ImVec2Like, image_size: ImVec2Like) -> ImVec2:
     """`ImVec2 HelloImGui::ImageProportionalSize(askedSize, imageSize)`:
     will return the displayed size of an image.
        - if askedSize.x or askedSize.y is 0, then the corresponding dimension
@@ -742,8 +772,12 @@ class ImGuiTweakedTheme:
     def __init__(
         self,
         theme: ImGuiTheme_ = ImGuiTheme_.darcula_darker,
-        tweaks: ImGuiThemeTweaks = ImGuiThemeTweaks(),
+        tweaks: Optional[ImGuiThemeTweaks] = None,
     ) -> None:
+        """---
+        Python bindings defaults:
+            If tweaks is None, then its default value will be: ImGuiThemeTweaks()
+        """
         pass
 
 # ImGuiStyle TweakedThemeThemeToStyle(const ImGuiTweakedTheme& tweaked_theme);    /* original C++ signature */
@@ -907,12 +941,19 @@ class FontLoadingParams:
         merge_to_last_font: bool = False,
         load_color: bool = False,
         inside_assets: bool = True,
-        glyph_ranges: List[ImWcharPair] = List[ImWcharPair](),
-        font_config: ImFontConfig = ImFontConfig(),
+        glyph_ranges: Optional[List[ImWcharPair]] = None,
+        font_config: Optional[ImFontConfig] = None,
         merge_font_awesome: bool = False,
-        font_config_font_awesome: ImFontConfig = ImFontConfig(),
+        font_config_font_awesome: Optional[ImFontConfig] = None,
     ) -> None:
-        """Auto-generated default constructor with named params"""
+        """Auto-generated default constructor with named params
+        ---
+        Python bindings defaults:
+            If any of the params below is None, then its default value below will be used:
+                glyphRanges: initialized with default value
+                fontConfig: ImFontConfig()
+                fontConfigFontAwesome: ImFontConfig()
+        """
         pass
 
 class FontDpiResponsive:
@@ -935,29 +976,37 @@ class FontDpiResponsive:
         self,
         font_filename: str = "",
         font_size: float = 0.0,
-        font_loading_params: FontLoadingParams = FontLoadingParams(),
+        font_loading_params: Optional[FontLoadingParams] = None,
     ) -> None:
-        """Auto-generated default constructor with named params"""
+        """Auto-generated default constructor with named params
+        ---
+        Python bindings defaults:
+            If fontLoadingParams is None, then its default value will be: FontLoadingParams()
+        """
         pass
 
 # ImFont* LoadFont(    /* original C++ signature */
 #         const std::string & fontFilename, float fontSize,
 #         const FontLoadingParams & params = __srcmlcpp_brace_init__());
 def load_font(
-    font_filename: str,
-    font_size: float,
-    params: FontLoadingParams = FontLoadingParams(),
+    font_filename: str, font_size: float, params: Optional[FontLoadingParams] = None
 ) -> ImFont:
+    """---
+    Python bindings defaults:
+        If params is None, then its default value will be: initialized with default value
+    """
     pass
 
 # FontDpiResponsive* LoadFontDpiResponsive(    /* original C++ signature */
 #         const std::string & fontFilename, float fontSize,
 #         const FontLoadingParams & params = __srcmlcpp_brace_init__());
 def load_font_dpi_responsive(
-    font_filename: str,
-    font_size: float,
-    params: FontLoadingParams = FontLoadingParams(),
+    font_filename: str, font_size: float, params: Optional[FontLoadingParams] = None
 ) -> FontDpiResponsive:
+    """---
+    Python bindings defaults:
+        If params is None, then its default value will be: initialized with default value
+    """
     pass
 
 # @@md
@@ -975,8 +1024,12 @@ def load_font_ttf(
     font_filename: str,
     font_size: float,
     use_full_glyph_range: bool = False,
-    config: ImFontConfig = ImFontConfig(),
+    config: Optional[ImFontConfig] = None,
 ) -> ImFont:
+    """---
+    Python bindings defaults:
+        If config is None, then its default value will be: ImFontConfig()
+    """
     pass
 
 # ImFont* LoadFontTTF_WithFontAwesomeIcons(    /* original C++ signature */
@@ -990,15 +1043,25 @@ def load_font_ttf_with_font_awesome_icons(
     font_filename: str,
     font_size: float,
     use_full_glyph_range: bool = False,
-    config_font: ImFontConfig = ImFontConfig(),
-    config_icons: ImFontConfig = ImFontConfig(),
+    config_font: Optional[ImFontConfig] = None,
+    config_icons: Optional[ImFontConfig] = None,
 ) -> ImFont:
+    """---
+    Python bindings defaults:
+        If any of the params below is None, then its default value below will be used:
+            configFont: ImFontConfig()
+            configIcons: ImFontConfig()
+    """
     pass
 
 # ImFont* MergeFontAwesomeToLastFont(float fontSize, ImFontConfig config = ImFontConfig());    /* original C++ signature */
 def merge_font_awesome_to_last_font(
-    font_size: float, config: ImFontConfig = ImFontConfig()
+    font_size: float, config: Optional[ImFontConfig] = None
 ) -> ImFont:
+    """---
+    Python bindings defaults:
+        If config is None, then its default value will be: ImFontConfig()
+    """
     pass
 
 # bool DidCallHelloImGuiLoadFontTTF();    /* original C++ signature */
@@ -1062,10 +1125,16 @@ class ScreenBounds:
     # ScreenBounds(ScreenPosition position = DefaultScreenPosition, ScreenSize size = DefaultWindowSize);    /* original C++ signature */
     def __init__(
         self,
-        position: ScreenPosition = DefaultScreenPosition,
-        size: ScreenSize = DefaultWindowSize,
+        position: Optional[ScreenPosition] = None,
+        size: Optional[ScreenSize] = None,
     ) -> None:
-        """Auto-generated default constructor with named params"""
+        """Auto-generated default constructor with named params
+        ---
+        Python bindings defaults:
+            If any of the params below is None, then its default value below will be used:
+                position: DefaultScreenPosition
+                size: DefaultWindowSize
+        """
         pass
 
 # namespace BackendApi
@@ -1105,6 +1174,19 @@ class WindowPositionMode(enum.Enum):
     # FromCoords,    /* original C++ signature */
     # }
     from_coords = enum.auto()  # (= 2)
+
+class EmscriptenKeyboardElement(enum.Enum):
+    # Window,    /* original C++ signature */
+    window = enum.auto()  # (= 0)
+    # Document,    /* original C++ signature */
+    document = enum.auto()  # (= 1)
+    # Screen,    /* original C++ signature */
+    screen = enum.auto()  # (= 2)
+    # Canvas,    /* original C++ signature */
+    canvas = enum.auto()  # (= 3)
+    # Default    /* original C++ signature */
+    # }
+    default = enum.auto()  # (= 4)
 
 class WindowSizeMeasureMode(enum.Enum):
     # ScreenCoords,    /* original C++ signature */
@@ -1216,17 +1298,23 @@ class WindowGeometry:
     # WindowGeometry(ScreenSize size = DefaultWindowSize, bool sizeAuto = false, WindowSizeState windowSizeState = WindowSizeState::Standard, WindowSizeMeasureMode windowSizeMeasureMode = WindowSizeMeasureMode::RelativeTo96Ppi, WindowPositionMode positionMode = WindowPositionMode::OsDefault, ScreenPosition position = DefaultScreenPosition, int monitorIdx = 0, FullScreenMode fullScreenMode = FullScreenMode::NoFullScreen, bool resizeAppWindowAtNextFrame = false);    /* original C++ signature */
     def __init__(
         self,
-        size: ScreenSize = DefaultWindowSize,
+        size: Optional[ScreenSize] = None,
         size_auto: bool = False,
         window_size_state: WindowSizeState = WindowSizeState.standard,
         window_size_measure_mode: WindowSizeMeasureMode = WindowSizeMeasureMode.relative_to96_ppi,
         position_mode: WindowPositionMode = WindowPositionMode.os_default,
-        position: ScreenPosition = DefaultScreenPosition,
+        position: Optional[ScreenPosition] = None,
         monitor_idx: int = 0,
         full_screen_mode: FullScreenMode = FullScreenMode.no_full_screen,
         resize_app_window_at_next_frame: bool = False,
     ) -> None:
-        """Auto-generated default constructor with named params"""
+        """Auto-generated default constructor with named params
+        ---
+        Python bindings defaults:
+            If any of the params below is None, then its default value below will be used:
+                size: DefaultWindowSize
+                position: DefaultScreenPosition
+        """
         pass
 
 # @@md
@@ -1332,6 +1420,19 @@ class AppWindowParams:
     # If True, HelloImGui will handle the edgeInsets on iOS.
     handle_edge_insets: bool = True
 
+    # EmscriptenKeyboardElement emscriptenKeyboardElement = EmscriptenKeyboardElement::Default;    /* original C++ signature */
+    # --------------- Emscripten ------------------
+    # `emscriptenKeyboardElement`: _EmscriptenKeyboardElement, default=Default_. HTML element in which SDL will capture the keyboard events.
+    # (For Emscripten only)
+    # Choose between: Window, Document, Screen, Canvas, Default.
+    # If Default:
+    # - the default SDL behavior is used, which is to capture the keyboard events for the window,
+    #   if no previous hint was set in the javascript code.
+    # - under Pyodide, the default behavior is to capture the keyboard events for the canvas.
+    emscripten_keyboard_element: EmscriptenKeyboardElement = (
+        EmscriptenKeyboardElement.default
+    )
+
     # bool repaintDuringResize_GotchaReentrantRepaint = false;    /* original C++ signature */
     # ----------------- repaint the window during resize -----------------
     # Very advanced and reserved for advanced C++ users.
@@ -1339,11 +1440,11 @@ class AppWindowParams:
     # Do read https://github.com/pthom/hello_imgui/issues/112 for info about the possible gotchas
     # (This API is not stable, as the name suggests, and this is not supported)
     repaint_during_resize_gotcha_reentrant_repaint: bool = False
-    # AppWindowParams(std::string windowTitle = std::string(), WindowGeometry windowGeometry = WindowGeometry(), bool restorePreviousGeometry = false, bool resizable = true, bool hidden = false, bool borderless = false, bool borderlessMovable = true, bool borderlessResizable = true, bool borderlessClosable = true, ImVec4 borderlessHighlightColor = ImVec4(0.2f, 0.4f, 1.f, 0.3f), EdgeInsets edgeInsets = EdgeInsets(), bool handleEdgeInsets = true, bool repaintDuringResize_GotchaReentrantRepaint = false);    /* original C++ signature */
+    # AppWindowParams(std::string windowTitle = std::string(), WindowGeometry windowGeometry = WindowGeometry(), bool restorePreviousGeometry = false, bool resizable = true, bool hidden = false, bool borderless = false, bool borderlessMovable = true, bool borderlessResizable = true, bool borderlessClosable = true, ImVec4 borderlessHighlightColor = ImVec4(0.2f, 0.4f, 1.f, 0.3f), EdgeInsets edgeInsets = EdgeInsets(), bool handleEdgeInsets = true, EmscriptenKeyboardElement emscriptenKeyboardElement = EmscriptenKeyboardElement::Default, bool repaintDuringResize_GotchaReentrantRepaint = false);    /* original C++ signature */
     def __init__(
         self,
         window_title: str = "",
-        window_geometry: WindowGeometry = WindowGeometry(),
+        window_geometry: Optional[WindowGeometry] = None,
         restore_previous_geometry: bool = False,
         resizable: bool = True,
         hidden: bool = False,
@@ -1351,12 +1452,20 @@ class AppWindowParams:
         borderless_movable: bool = True,
         borderless_resizable: bool = True,
         borderless_closable: bool = True,
-        borderless_highlight_color: ImVec4 = ImVec4(0.2, 0.4, 1.0, 0.3),
-        edge_insets: EdgeInsets = EdgeInsets(),
+        borderless_highlight_color: Optional[ImVec4Like] = None,
+        edge_insets: Optional[EdgeInsets] = None,
         handle_edge_insets: bool = True,
+        emscripten_keyboard_element: EmscriptenKeyboardElement = EmscriptenKeyboardElement.default,
         repaint_during_resize_gotcha_reentrant_repaint: bool = False,
     ) -> None:
-        """Auto-generated default constructor with named params"""
+        """Auto-generated default constructor with named params
+        ---
+        Python bindings defaults:
+            If any of the params below is None, then its default value below will be used:
+                windowGeometry: WindowGeometry()
+                borderlessHighlightColor: ImVec4(0.2, 0.4, 1., 0.3)
+                edgeInsets: EdgeInsets()
+        """
         pass
 
 # @@md
@@ -1517,12 +1626,20 @@ class ImGuiWindowParams:
         show_status_bar: bool = False,
         show_status_fps: bool = True,
         remember_status_bar_settings: bool = True,
-        full_screen_window_margin_top_left: ImVec2 = ImVec2(0.0, 0.0),
-        full_screen_window_margin_bottom_right: ImVec2 = ImVec2(0.0, 0.0),
-        tweaked_theme: ImGuiTweakedTheme = ImGuiTweakedTheme(),
-        background_color: ImVec4 = ImVec4(0.0, 0.0, 0.0, 0.0),
+        full_screen_window_margin_top_left: Optional[ImVec2Like] = None,
+        full_screen_window_margin_bottom_right: Optional[ImVec2Like] = None,
+        tweaked_theme: Optional[ImGuiTweakedTheme] = None,
+        background_color: Optional[ImVec4Like] = None,
     ) -> None:
-        """Auto-generated default constructor with named params"""
+        """Auto-generated default constructor with named params
+        ---
+        Python bindings defaults:
+            If any of the params below is None, then its default value below will be used:
+                fullScreenWindow_MarginTopLeft: ImVec2(0., 0.)
+                fullScreenWindow_MarginBottomRight: ImVec2(0., 0.)
+                tweakedTheme: ImGuiTweakedTheme()
+                backgroundColor: ImVec4(0., 0., 0., 0.)
+        """
         pass
 
 # @@md
@@ -1597,12 +1714,20 @@ class MobileCallbacks:
     # MobileCallbacks(VoidFunction OnDestroy = EmptyVoidFunction(), VoidFunction OnLowMemory = EmptyVoidFunction(), VoidFunction OnPause = EmptyVoidFunction(), VoidFunction OnResume = EmptyVoidFunction());    /* original C++ signature */
     def __init__(
         self,
-        on_destroy: VoidFunction = EmptyVoidFunction(),
-        on_low_memory: VoidFunction = EmptyVoidFunction(),
-        on_pause: VoidFunction = EmptyVoidFunction(),
-        on_resume: VoidFunction = EmptyVoidFunction(),
+        on_destroy: Optional[VoidFunction] = None,
+        on_low_memory: Optional[VoidFunction] = None,
+        on_pause: Optional[VoidFunction] = None,
+        on_resume: Optional[VoidFunction] = None,
     ) -> None:
-        """Auto-generated default constructor with named params"""
+        """Auto-generated default constructor with named params
+        ---
+        Python bindings defaults:
+            If any of the params below is None, then its default value below will be used:
+                OnDestroy: EmptyVoidFunction()
+                OnLowMemory: EmptyVoidFunction()
+                OnPause: EmptyVoidFunction()
+                OnResume: EmptyVoidFunction()
+        """
         pass
 
 # @@md
@@ -1641,10 +1766,16 @@ class EdgeToolbarOptions:
     def __init__(
         self,
         size_em: float = 2.5,
-        window_padding_em: ImVec2 = ImVec2(0.3, 0.3),
-        window_bg: ImVec4 = ImVec4(0.0, 0.0, 0.0, 0.0),
+        window_padding_em: Optional[ImVec2Like] = None,
+        window_bg: Optional[ImVec4Like] = None,
     ) -> None:
-        """Auto-generated default constructor with named params"""
+        """Auto-generated default constructor with named params
+        ---
+        Python bindings defaults:
+            If any of the params below is None, then its default value below will be used:
+                WindowPaddingEm: ImVec2(0.3, 0.3)
+                WindowBg: ImVec4(0., 0., 0., 0.)
+        """
         pass
 
 class EdgeToolbar:
@@ -1659,10 +1790,16 @@ class EdgeToolbar:
     # EdgeToolbar(VoidFunction ShowToolbar = EmptyVoidFunction(), EdgeToolbarOptions options = EdgeToolbarOptions());    /* original C++ signature */
     def __init__(
         self,
-        show_toolbar: VoidFunction = EmptyVoidFunction(),
-        options: EdgeToolbarOptions = EdgeToolbarOptions(),
+        show_toolbar: Optional[VoidFunction] = None,
+        options: Optional[EdgeToolbarOptions] = None,
     ) -> None:
-        """Auto-generated default constructor with named params"""
+        """Auto-generated default constructor with named params
+        ---
+        Python bindings defaults:
+            If any of the params below is None, then its default value below will be used:
+                ShowToolbar: EmptyVoidFunction()
+                options: EdgeToolbarOptions()
+        """
         pass
 
 # std::vector<EdgeToolbarType> AllEdgeToolbarTypes();    /* original C++ signature */
@@ -1748,9 +1885,13 @@ class RunnerCallbacks:
         self,
         edge_toolbar_type: EdgeToolbarType,
         gui_function: VoidFunction,
-        options: EdgeToolbarOptions = EdgeToolbarOptions(),
+        options: Optional[EdgeToolbarOptions] = None,
     ) -> None:
-        """`AddEdgeToolbar`: Add a toolbar that can be placed on the edges of the App window"""
+        """`AddEdgeToolbar`: Add a toolbar that can be placed on the edges of the App window
+        ---
+        Python bindings defaults:
+            If options is None, then its default value will be: EdgeToolbarOptions()
+        """
         pass
     # --------------- Startup sequence callbacks -------------------
 
@@ -1874,28 +2015,50 @@ class RunnerCallbacks:
     # RunnerCallbacks(VoidFunction ShowGui = EmptyVoidFunction(), VoidFunction ShowMenus = EmptyVoidFunction(), VoidFunction ShowAppMenuItems = EmptyVoidFunction(), VoidFunction ShowStatus = EmptyVoidFunction(), VoidFunction PostInit_AddPlatformBackendCallbacks = EmptyVoidFunction(), VoidFunction PostInit = EmptyVoidFunction(), VoidFunction LoadAdditionalFonts = ImGuiDefaultSettings::LoadDefaultFont_WithFontAwesomeIcons, DefaultIconFont defaultIconFont = DefaultIconFont::FontAwesome4, VoidFunction SetupImGuiConfig = ImGuiDefaultSettings::SetupDefaultImGuiConfig, VoidFunction SetupImGuiStyle = ImGuiDefaultSettings::SetupDefaultImGuiStyle, VoidFunction RegisterTests = EmptyVoidFunction(), bool registerTestsCalled = false, VoidFunction BeforeExit = EmptyVoidFunction(), VoidFunction BeforeExit_PostCleanup = EmptyVoidFunction(), VoidFunction PreNewFrame = EmptyVoidFunction(), VoidFunction BeforeImGuiRender = EmptyVoidFunction(), VoidFunction AfterSwap = EmptyVoidFunction(), VoidFunction CustomBackground = EmptyVoidFunction(), VoidFunction PostRenderDockableWindows = EmptyVoidFunction(), AnyEventCallback AnyBackendEventCallback = EmptyEventCallback());    /* original C++ signature */
     def __init__(
         self,
-        show_gui: VoidFunction = EmptyVoidFunction(),
-        show_menus: VoidFunction = EmptyVoidFunction(),
-        show_app_menu_items: VoidFunction = EmptyVoidFunction(),
-        show_status: VoidFunction = EmptyVoidFunction(),
-        post_init_add_platform_backend_callbacks: VoidFunction = EmptyVoidFunction(),
-        post_init: VoidFunction = EmptyVoidFunction(),
-        load_additional_fonts: VoidFunction = imgui_default_settings.LoadDefaultFont_WithFontAwesomeIcons,
+        show_gui: Optional[VoidFunction] = None,
+        show_menus: Optional[VoidFunction] = None,
+        show_app_menu_items: Optional[VoidFunction] = None,
+        show_status: Optional[VoidFunction] = None,
+        post_init_add_platform_backend_callbacks: Optional[VoidFunction] = None,
+        post_init: Optional[VoidFunction] = None,
+        load_additional_fonts: Optional[VoidFunction] = None,
         default_icon_font: DefaultIconFont = DefaultIconFont.font_awesome4,
-        setup_imgui_config: VoidFunction = imgui_default_settings.SetupDefaultImGuiConfig,
-        setup_imgui_style: VoidFunction = imgui_default_settings.SetupDefaultImGuiStyle,
-        register_tests: VoidFunction = EmptyVoidFunction(),
+        setup_imgui_config: Optional[VoidFunction] = None,
+        setup_imgui_style: Optional[VoidFunction] = None,
+        register_tests: Optional[VoidFunction] = None,
         register_tests_called: bool = False,
-        before_exit: VoidFunction = EmptyVoidFunction(),
-        before_exit_post_cleanup: VoidFunction = EmptyVoidFunction(),
-        pre_new_frame: VoidFunction = EmptyVoidFunction(),
-        before_imgui_render: VoidFunction = EmptyVoidFunction(),
-        after_swap: VoidFunction = EmptyVoidFunction(),
-        custom_background: VoidFunction = EmptyVoidFunction(),
-        post_render_dockable_windows: VoidFunction = EmptyVoidFunction(),
-        any_backend_event_callback: AnyEventCallback = EmptyEventCallback(),
+        before_exit: Optional[VoidFunction] = None,
+        before_exit_post_cleanup: Optional[VoidFunction] = None,
+        pre_new_frame: Optional[VoidFunction] = None,
+        before_imgui_render: Optional[VoidFunction] = None,
+        after_swap: Optional[VoidFunction] = None,
+        custom_background: Optional[VoidFunction] = None,
+        post_render_dockable_windows: Optional[VoidFunction] = None,
+        any_backend_event_callback: Optional[AnyEventCallback] = None,
     ) -> None:
-        """Auto-generated default constructor with named params"""
+        """Auto-generated default constructor with named params
+        ---
+        Python bindings defaults:
+            If any of the params below is None, then its default value below will be used:
+                ShowGui: EmptyVoidFunction()
+                ShowMenus: EmptyVoidFunction()
+                ShowAppMenuItems: EmptyVoidFunction()
+                ShowStatus: EmptyVoidFunction()
+                PostInit_AddPlatformBackendCallbacks: EmptyVoidFunction()
+                PostInit: EmptyVoidFunction()
+                LoadAdditionalFonts: imgui_default_settings.LoadDefaultFont_WithFontAwesomeIcons
+                SetupImGuiConfig: imgui_default_settings.SetupDefaultImGuiConfig
+                SetupImGuiStyle: imgui_default_settings.SetupDefaultImGuiStyle
+                RegisterTests: EmptyVoidFunction()
+                BeforeExit: EmptyVoidFunction()
+                BeforeExit_PostCleanup: EmptyVoidFunction()
+                PreNewFrame: EmptyVoidFunction()
+                BeforeImGuiRender: EmptyVoidFunction()
+                AfterSwap: EmptyVoidFunction()
+                CustomBackground: EmptyVoidFunction()
+                PostRenderDockableWindows: EmptyVoidFunction()
+                AnyBackendEventCallback: EmptyEventCallback()
+        """
         pass
 
 # @@md
@@ -2095,7 +2258,7 @@ class DockingSplit:
     # `nodeFlags`: *ImGuiDockNodeFlags_ (enum)*.
     #  Flags to apply to the new dock space
     #  (enable/disable resizing, splitting, tab bar, etc.)
-    node_flags: ImGuiDockNodeFlags = DockNodeFlags_.none
+    node_flags: ImGuiDockNodeFlags = ImGuiDockNodeFlags_None
 
     # DockingSplit(const DockSpaceName& initialDock_ = "", const DockSpaceName& newDock_ = "",    /* original C++ signature */
     #                  ImGuiDir direction_ = ImGuiDir_Down, float ratio_ = 0.25f,
@@ -2105,11 +2268,17 @@ class DockingSplit:
         self,
         initial_dock_: DockSpaceName = "",
         new_dock_: DockSpaceName = "",
-        direction_: ImGuiDir = Dir.down,
+        direction_: Optional[ImGuiDir] = None,
         ratio_: float = 0.25,
-        node_flags_: ImGuiDockNodeFlags = DockNodeFlags_.none,
+        node_flags_: Optional[ImGuiDockNodeFlags] = None,
     ) -> None:
-        """Constructor"""
+        """Constructor
+        ---
+        Python bindings defaults:
+            If any of the params below is None, then its default value below will be used:
+                direction_: ImGuiDir_Down
+                nodeFlags_: ImGuiDockNodeFlags_None
+        """
         pass
 
 # @@md
@@ -2187,7 +2356,7 @@ class DockableWindow:
     # ImGuiCond  windowSizeCondition = ImGuiCond_FirstUseEver;    /* original C++ signature */
     # `windowSizeCondition`: _ImGuiCond, default=ImGuiCond_FirstUseEver_.
     #  When to apply the window size.
-    window_size_condition: ImGuiCond = Cond_.first_use_ever
+    window_size_condition: ImGuiCond = ImGuiCond_FirstUseEver
 
     # ImVec2 windowPosition = ImVec2(0.f, 0.f);    /* original C++ signature */
     # `windowPos`: _ImVec2, default=(0., 0.) (i.e let the app decide)_.
@@ -2197,7 +2366,7 @@ class DockableWindow:
     # ImGuiCond  windowPositionCondition = ImGuiCond_FirstUseEver;    /* original C++ signature */
     # `windowPosCondition`: _ImGuiCond, default=ImGuiCond_FirstUseEver_.
     #  When to apply the window position.
-    window_position_condition: ImGuiCond = Cond_.first_use_ever
+    window_position_condition: ImGuiCond = ImGuiCond_FirstUseEver
 
     # DockableWindow(    /* original C++ signature */
     #         const std::string & label_ = "",
@@ -2213,12 +2382,15 @@ class DockableWindow:
         self,
         label_: str = "",
         dock_space_name_: DockSpaceName = "",
-        gui_function_: VoidFunction = EmptyVoidFunction(),
+        gui_function_: Optional[VoidFunction] = None,
         is_visible_: bool = True,
         can_be_closed_: bool = True,
     ) -> None:
         """--------------- Constructor ------------------------------
-        Constructor
+         Constructor
+        ---
+        Python bindings defaults:
+            If guiFunction_ is None, then its default value will be: EmptyVoidFunction()
         """
         pass
 
@@ -2270,7 +2442,7 @@ class DockingParams:
     #  Most flags are inherited by children dock spaces.
     #  You can also set flags for specific dock spaces via `DockingSplit.nodeFlags`
     main_dock_space_node_flags: ImGuiDockNodeFlags = (
-        DockNodeFlags_.passthru_central_node
+        ImGuiDockNodeFlags_PassthruCentralNode
     )
 
     # --------------- Layout handling -----------------------------
@@ -2312,14 +2484,21 @@ class DockingParams:
     # DockingParams(std::vector<DockingSplit> dockingSplits = std::vector<DockingSplit>(), std::vector<DockableWindow> dockableWindows = std::vector<DockableWindow>(), std::string layoutName = "Default", ImGuiDockNodeFlags mainDockSpaceNodeFlags = ImGuiDockNodeFlags_PassthruCentralNode, DockingLayoutCondition layoutCondition = DockingLayoutCondition::FirstUseEver, bool layoutReset = false);    /* original C++ signature */
     def __init__(
         self,
-        docking_splits: List[DockingSplit] = List[DockingSplit](),
-        dockable_windows: List[DockableWindow] = List[DockableWindow](),
+        docking_splits: Optional[List[DockingSplit]] = None,
+        dockable_windows: Optional[List[DockableWindow]] = None,
         layout_name: str = "Default",
-        main_dock_space_node_flags: ImGuiDockNodeFlags = DockNodeFlags_.passthru_central_node,
+        main_dock_space_node_flags: Optional[ImGuiDockNodeFlags] = None,
         layout_condition: DockingLayoutCondition = DockingLayoutCondition.first_use_ever,
         layout_reset: bool = False,
     ) -> None:
-        """Auto-generated default constructor with named params"""
+        """Auto-generated default constructor with named params
+        ---
+        Python bindings defaults:
+            If any of the params below is None, then its default value below will be used:
+                dockingSplits: List[DockingSplit]()
+                dockableWindows: List[DockableWindow]()
+                mainDockSpaceNodeFlags: ImGuiDockNodeFlags_PassthruCentralNode
+        """
         pass
 
 # @@md
@@ -2544,9 +2723,13 @@ class RendererBackendOptions:
     def __init__(
         self,
         request_float_buffer: bool = False,
-        open_gl_options: OpenGlOptions = OpenGlOptions(),
+        open_gl_options: Optional[OpenGlOptions] = None,
     ) -> None:
-        """Auto-generated default constructor with named params"""
+        """Auto-generated default constructor with named params
+        ---
+        Python bindings defaults:
+            If openGlOptions is None, then its default value will be: OpenGlOptions()
+        """
         pass
 
 # Note:
@@ -2928,26 +3111,39 @@ class RunnerParams:
     # RunnerParams(RunnerCallbacks callbacks = RunnerCallbacks(), AppWindowParams appWindowParams = AppWindowParams(), ImGuiWindowParams imGuiWindowParams = ImGuiWindowParams(), DockingParams dockingParams = DockingParams(), std::vector<DockingParams> alternativeDockingLayouts = std::vector<DockingParams>(), bool rememberSelectedAlternativeLayout = true, BackendPointers backendPointers = BackendPointers(), RendererBackendOptions rendererBackendOptions = RendererBackendOptions(), PlatformBackendType platformBackendType = PlatformBackendType::FirstAvailable, RendererBackendType rendererBackendType = RendererBackendType::FirstAvailable, IniFolderType iniFolderType = IniFolderType::CurrentFolder, std::string iniFilename = "", bool iniFilename_useAppWindowTitle = true, bool appShallExit = false, FpsIdling fpsIdling = FpsIdling(), DpiAwareParams dpiAwareParams = DpiAwareParams(), bool useImGuiTestEngine = false, int emscripten_fps = 0);    /* original C++ signature */
     def __init__(
         self,
-        callbacks: RunnerCallbacks = RunnerCallbacks(),
-        app_window_params: AppWindowParams = AppWindowParams(),
-        imgui_window_params: ImGuiWindowParams = ImGuiWindowParams(),
-        docking_params: DockingParams = DockingParams(),
-        alternative_docking_layouts: List[DockingParams] = List[DockingParams](),
+        callbacks: Optional[RunnerCallbacks] = None,
+        app_window_params: Optional[AppWindowParams] = None,
+        imgui_window_params: Optional[ImGuiWindowParams] = None,
+        docking_params: Optional[DockingParams] = None,
+        alternative_docking_layouts: Optional[List[DockingParams]] = None,
         remember_selected_alternative_layout: bool = True,
-        backend_pointers: BackendPointers = BackendPointers(),
-        renderer_backend_options: RendererBackendOptions = RendererBackendOptions(),
+        backend_pointers: Optional[BackendPointers] = None,
+        renderer_backend_options: Optional[RendererBackendOptions] = None,
         platform_backend_type: PlatformBackendType = PlatformBackendType.first_available,
         renderer_backend_type: RendererBackendType = RendererBackendType.first_available,
         ini_folder_type: IniFolderType = IniFolderType.current_folder,
         ini_filename: str = "",
         ini_filename_use_app_window_title: bool = True,
         app_shall_exit: bool = False,
-        fps_idling: FpsIdling = FpsIdling(),
-        dpi_aware_params: DpiAwareParams = DpiAwareParams(),
+        fps_idling: Optional[FpsIdling] = None,
+        dpi_aware_params: Optional[DpiAwareParams] = None,
         use_imgui_test_engine: bool = False,
         emscripten_fps: int = 0,
     ) -> None:
-        """Auto-generated default constructor with named params"""
+        """Auto-generated default constructor with named params
+        ---
+        Python bindings defaults:
+            If any of the params below is None, then its default value below will be used:
+                callbacks: RunnerCallbacks()
+                appWindowParams: AppWindowParams()
+                imGuiWindowParams: ImGuiWindowParams()
+                dockingParams: DockingParams()
+                alternativeDockingLayouts: List[DockingParams]()
+                backendPointers: BackendPointers()
+                rendererBackendOptions: RendererBackendOptions()
+                fpsIdling: FpsIdling()
+                dpiAwareParams: DpiAwareParams()
+        """
         pass
 
 # @@md
@@ -3038,15 +3234,21 @@ class SimpleRunnerParams:
     # SimpleRunnerParams(VoidFunction guiFunction = EmptyVoidFunction(), std::string windowTitle = "", bool windowSizeAuto = false, bool windowRestorePreviousGeometry = false, ScreenSize windowSize = DefaultWindowSize, float fpsIdle = 9.f, bool enableIdling = true);    /* original C++ signature */
     def __init__(
         self,
-        gui_function: VoidFunction = EmptyVoidFunction(),
+        gui_function: Optional[VoidFunction] = None,
         window_title: str = "",
         window_size_auto: bool = False,
         window_restore_previous_geometry: bool = False,
-        window_size: ScreenSize = DefaultWindowSize,
+        window_size: Optional[ScreenSize] = None,
         fps_idle: float = 9.0,
         enable_idling: bool = True,
     ) -> None:
-        """Auto-generated default constructor with named params"""
+        """Auto-generated default constructor with named params
+        ---
+        Python bindings defaults:
+            If any of the params below is None, then its default value below will be used:
+                guiFunction: EmptyVoidFunction()
+                windowSize: DefaultWindowSize
+        """
         pass
 
 # @@md
@@ -3146,8 +3348,15 @@ class InputTextData:
 
     # InputTextData(const std::string& text = "", bool multiline = false, ImVec2 size_em = ImVec2(0, 0)) : Text(text), Multiline(multiline), SizeEm(size_em) {}    /* original C++ signature */
     def __init__(
-        self, text: str = "", multiline: bool = False, size_em: ImVec2 = ImVec2(0, 0)
+        self,
+        text: str = "",
+        multiline: bool = False,
+        size_em: Optional[ImVec2Like] = None,
     ) -> None:
+        """---
+        Python bindings defaults:
+            If size_em is None, then its default value will be: ImVec2(0, 0)
+        """
         pass
 
 # bool InputTextResizable(const char* label, InputTextData* textInput);    /* original C++ signature */
@@ -3232,10 +3441,14 @@ def run(
     window_title: str = "",
     window_size_auto: bool = False,
     window_restore_previous_geometry: bool = False,
-    window_size: ScreenSize = DefaultWindowSize,
+    window_size: Optional[ScreenSize] = None,
     fps_idle: float = 10.0,
 ) -> None:
-    """Runs an application, by providing the Gui function, the window title, etc."""
+    """Runs an application, by providing the Gui function, the window title, etc.
+    ---
+    Python bindings defaults:
+        If windowSize is None, then its default value will be: DefaultWindowSize
+    """
     pass
 
 # =========================== HelloImGui::ManualRender ==================================
@@ -3488,11 +3701,14 @@ class manual_render:  # Proxy class that introduces typings for the *submodule* 
         window_title: str = "",
         window_size_auto: bool = False,
         window_restore_previous_geometry: bool = False,
-        window_size: ScreenSize = DefaultWindowSize,
+        window_size: Optional[ScreenSize] = None,
         fps_idle: float = 10.0,
     ) -> None:
         """Initializes the renderer with a simple GUI function and additional parameters.
-        This will initialize the platform backend (SDL, Glfw, etc.) and the rendering backend (OpenGL, Vulkan, etc.).
+         This will initialize the platform backend (SDL, Glfw, etc.) and the rendering backend (OpenGL, Vulkan, etc.).
+        ---
+        Python bindings defaults:
+            If windowSize is None, then its default value will be: DefaultWindowSize
         """
         pass
     # void Render();    /* original C++ signature */

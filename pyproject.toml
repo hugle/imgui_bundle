@@ -1,8 +1,8 @@
 [build-system]
-requires = ["scikit-build-core>=0.9.1", "pybind11"]
+requires = ["scikit-build-core>=0.9.1", "nanobind"]
 build-backend = "scikit_build_core.build"
 
-# To bebug build backend, replace by:
+# To debug build backend, replace by:
 # cf https://peps.python.org/pep-0517/#in-tree-build-backends
 #    requires = ["pybind11", "packaging", "pathspec"]
 #    build-backend = "scikit_build_core.build"
@@ -10,7 +10,7 @@ build-backend = "scikit_build_core.build"
 
 [project]
 name = "imgui-bundle"
-version = "1.5.2"  # Remember to mirror changes on line 2 of main CMakeLists!
+version = "1.6.0"  # Remember to mirror changes on line 2 of main CMakeLists!
 description="Dear ImGui Bundle: easily create ImGui applications in Python and C++. Batteries included!"
 readme = "bindings/imgui_bundle/Readme_pypi.md"
 authors = [ { name = "Pascal Thomet", email = "pthomet@gmail.com" } ]
@@ -53,21 +53,21 @@ Changelog = "https://github.com/pthom/imgui_bundle/blob/main/CHANGELOG.md"
 [tool.scikit-build]
 wheel.expand-macos-universal-tags = true
 wheel.packages = ["bindings/imgui_bundle"]
-# wheel.exclude = ["bindings/imgui_bundle/doc/*", 
-#                  "bindings/imgui_bundle/demos_cpp/*",
-#                  "bindings/imgui_bundle/immapp/*",
-#                  "bindings/imgui_bundle/demos_python/*",
-#                  "bindings/imgui_bundle/demos_assets/*",
-#                  "bindings/imgui_bundle/immvision.pyi",
-#                  "bindings/imgui_bundle/imgui_fig.pyi",
-#                  "bindings/imgui_bundle/imgui_tex_inspect.pyi",
-#                  "bindings/imgui_bundle/imguizmo.pyi",
-#                  "bindings/imgui_bundle/nanovg.pyi",
-#                 ]
+sdist.exclude = ["bindings/imgui_bundle/doc", 
+                 "bindings/imgui_bundle/demos_cpp",
+                 "bindings/imgui_bundle/immapp",
+                 "bindings/imgui_bundle/demos_python",
+                 "bindings/imgui_bundle/demos_assets",
+                 "bindings/imgui_bundle/immvision.pyi",
+                 "bindings/imgui_bundle/imgui_fig.pyi",
+                 "bindings/imgui_bundle/imgui_tex_inspect.pyi",
+                 "bindings/imgui_bundle/imguizmo.pyi",
+                 "bindings/imgui_bundle/nanovg.pyi",
+                ]
 
 cmake.version = ">=3.26.1"
-# cmake.verbose = true
-# logging.level = "INFO"
+build.verbose = true
+logging.level = "INFO"
 
 
 [tool.isort]
@@ -81,7 +81,7 @@ profile = "black"
 build-verbosity = 1
 
 # Target python versions:
-build = ["cp310-*", "cp311-*", "cp312-*"]
+build = ["cp311-*", "cp312-*", "cp313-*"]
 
 # Tests
 test-requires = "pytest"
@@ -120,7 +120,7 @@ archs = ["x86_64"]
 #------------------------------------
 [tool.cibuildwheel.linux]
 skip = ["*i686"]
-test-skip = ["cp311-musllinux_x86_64"] #  opencv-python not yet available there
+test-skip = ["*-musllinux_*"] #  issue with OpenGL on musllinux
 # Environment variables
 # IMGUIBUNDLE_OPENCV_FETCH_SOURCE => Will fetch, build and install a very-minimalist OpenCV
 # environment = { IMGUIBUNDLE_OPENCV_FETCH_SOURCE="ON" }
@@ -141,10 +141,15 @@ environment-pass = ["IMMVISION_OPENCV_GIT_REPO"]  # pass alternative git repo to
 # * manylinux_2_24 (Debian 8) uses apt (and is stuck on GCC 6),
 #     => apt install xorg-dev
 # * musllinux_1_1 MUSL based distributions of Linux (like Alpine). uses apk
-before-all = "yum install -y libXcursor-devel libXi-devel libXinerama-devel libXrandr-devel"
+#
+# Also, do the equivalent of:
+# sudo apt-get install -y xorg-dev libgl1-mesa-dev libglfw3-dev libglew-dev xvfb
+
+# sudo apt-get install -y libgl1-mesa-dev
+before-all = "yum install -y libXcursor-devel libXi-devel libXinerama-devel libXrandr-devel mesa-libGL-devel"
 [[tool.cibuildwheel.overrides]]
 select = "*-musllinux*"
-before-all = "apk add xorg-server-dev libxcursor-dev libxi-dev libxinerama-dev libxrandr-dev"
+before-all = "apk add xorg-server-dev libxcursor-dev libxi-dev libxinerama-dev libxrandr-dev mesa-dev mesa-gl"
 
 #------------------------------------
 # windows wheels options

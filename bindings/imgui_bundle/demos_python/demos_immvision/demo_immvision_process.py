@@ -1,5 +1,3 @@
-import os.path
-
 import numpy as np
 from typing import Any
 from numpy.typing import NDArray
@@ -48,7 +46,7 @@ def compute_sobel(image: ImageRgb, params: SobelParams) -> ImageFloat:
     r = cv2.Sobel(
         blurred, ddepth=cv2.CV_64F, dx=dx, dy=dy, ksize=params.k_size, scale=good_scale
     )
-    return r
+    return r  # type: ignore
 
 
 def gui_sobel_params(params: SobelParams) -> bool:
@@ -130,8 +128,7 @@ def demo_gui():
     static = demo_gui
 
     if static.app_state is None:
-        this_dir = os.path.dirname(__file__)
-        static.app_state = AppState(this_dir + "/../../demos_assets/images/house.jpg")
+        static.app_state = AppState(demo_utils.demos_assets_folder() + "/images/house.jpg")
 
     imgui_md.render_unindented(
         """

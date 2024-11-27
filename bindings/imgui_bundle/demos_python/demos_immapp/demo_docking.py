@@ -15,7 +15,7 @@ import time
 
 from imgui_bundle import hello_imgui, icons_fontawesome_6, imgui, immapp, imgui_ctx, ImVec4, ImVec2
 from imgui_bundle.demos_python import demo_utils
-from typing import List
+from typing import List, Any
 
 
 ##########################################################################
@@ -30,7 +30,7 @@ class MyAppSettings:
             "Hello, Dear ImGui\n"
             "Unleash your creativity!\n",
             True, # multiline
-            ImVec2(14.0, 3.0) # initial size (in em)
+            (14.0, 3.0) # initial size (in em)
         )
 
 class RocketState(Enum):
@@ -72,12 +72,10 @@ def load_fonts(app_state: AppState):  # This is called by runnerParams.callbacks
     hello_imgui.imgui_default_settings.load_default_font_with_font_awesome_icons()
 
     # Load the title font
-    app_state.title_font = hello_imgui.load_font("fonts/DroidSans.ttf", 18.0)
+    # app_state.title_font = hello_imgui.load_font("fonts/DroidSans.ttf", 18.0)
     font_loading_params_title_icons = hello_imgui.FontLoadingParams()
-    font_loading_params_title_icons.merge_to_last_font = True
-    font_loading_params_title_icons.use_full_glyph_range = True
-    app_state.title_font = hello_imgui.load_font("fonts/Font_Awesome_6_Free-Solid-900.otf",
-                                                 18.0, font_loading_params_title_icons)
+    font_loading_params_title_icons.merge_font_awesome = True
+    app_state.title_font = hello_imgui.load_font("fonts/Roboto/Roboto-BoldItalic.ttf", 18, font_loading_params_title_icons)
 
     # Load the emoji font
     font_loading_params_emoji = hello_imgui.FontLoadingParams()
@@ -105,7 +103,7 @@ def load_fonts(app_state: AppState):  # This is called by runnerParams.callbacks
 
 # Warning, the save/load function below are quite simplistic!
 def my_app_settings_to_string(settings: MyAppSettings) -> str:
-    as_dict = {}
+    as_dict: dict[str, Any] = {}
     as_dict["motto"] = hello_imgui.input_text_data_to_dict(settings.motto)
     as_dict["value"] = settings.value
     return json.dumps(as_dict)
@@ -404,7 +402,7 @@ def gui_window_alternative_theme(app_state: AppState):
             # Display a image of the haiku below with Japanese characters
             # with an informative tooltip
             haiku_image_height = hello_imgui.em_size(5.0)
-            hello_imgui.image_from_asset("images/haiku.png", ImVec2(0.0, haiku_image_height))
+            hello_imgui.image_from_asset("images/haiku.png", (0.0, haiku_image_height))
             imgui.set_item_tooltip("""
 Extract from Wikipedia
 -------------------------------------------------------------------------------
@@ -452,7 +450,7 @@ Handling Japanese font is of course possible within ImGui / Hello ImGui!
 
             if imgui.tree_node("Text Display"):
                 imgui.text("Hello, world!")
-                imgui.text_colored(ImVec4(1.0, 0.5, 0.5, 1.0), "Some text")
+                imgui.text_colored((1.0, 0.5, 0.5, 1.0), "Some text")
                 imgui.text_disabled("Disabled text")
                 imgui.text_wrapped("This is a long text that will be wrapped in the window")
                 imgui.tree_pop()
@@ -477,7 +475,7 @@ def demo_assets(app_state: AppState):
 
 def demo_fonts(app_state: AppState):
     imgui.push_font(app_state.title_font)
-    imgui.text("Fonts - " + icons_fontawesome_6.ICON_FA_PEN_NIB)
+    imgui.text("Fonts - " + icons_fontawesome_6.ICON_FA_ROCKET)
     imgui.pop_font()
 
     imgui.text_wrapped("Mix icons " + icons_fontawesome_6.ICON_FA_FACE_SMILE + " and text " + icons_fontawesome_6.ICON_FA_ROCKET)
@@ -713,7 +711,7 @@ def create_dockable_windows(app_state: AppState) -> List[hello_imgui.DockableWin
     dear_imgui_demo_window = hello_imgui.DockableWindow()
     dear_imgui_demo_window.label = "Dear ImGui Demo"
     dear_imgui_demo_window.dock_space_name = "MainDockSpace"
-    dear_imgui_demo_window.imgui_window_flags = imgui.WindowFlags_.menu_bar
+    dear_imgui_demo_window.imgui_window_flags = imgui.WindowFlags_.menu_bar.value
     dear_imgui_demo_window.gui_function = imgui.show_demo_window  # type: ignore
 
     # alternativeThemeWindow
@@ -783,8 +781,8 @@ def setup_my_theme():
     # Apply the tweaked theme
     hello_imgui.apply_tweaked_theme(tweaked_theme)  # Note: you can also push/pop the theme in order to apply it only to a specific part of the Gui:  hello_imgui.push_tweaked_theme(tweaked_theme) / hello_imgui.pop_tweaked_theme()
     # Then apply further modifications to ImGui style
-    imgui.get_style().item_spacing = (6, 4)  # Reduce spacing between items ((8, 4) by default)
-    imgui.get_style().set_color_(imgui.Col_.text, ImVec4(0.8, 0.8, 0.85, 1.0))  # Change text color
+    imgui.get_style().item_spacing = ImVec2(6, 4)  # Reduce spacing between items ((8, 4) by default)
+    imgui.get_style().set_color_(imgui.Col_.text.value, (0.8, 0.8, 0.85, 1.0))  # Change text color
 
 
 ##########################################################################

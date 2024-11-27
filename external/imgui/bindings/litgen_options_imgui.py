@@ -114,6 +114,7 @@ def _add_imvector_template_options(options: litgen.LitgenOptions):
         "ImWchar32=uint",
         "ImWchar=ImWchar32",
         "ImGuiItemFlags=int",
+        "ImU8=uchar",
     ]
     ignored_types = [
         "const char*",
@@ -187,6 +188,7 @@ def litgen_options_imgui(
     from litgen.internal import cpp_to_python
 
     options = LitgenOptions()
+    options.use_nanobind()
 
     def is_immutable_cpp_type(cpp_type: str) -> bool:
         if cpp_type in [
@@ -200,6 +202,21 @@ def litgen_options_imgui(
         return False
 
     options.fn_params_adapt_mutable_param_with_default_value__fn_is_known_immutable_type = is_immutable_cpp_type
+
+    def is_immutable_cpp_type(cpp_type: str) -> bool:
+        if cpp_type in [
+            "ImGuiDataType_", "ImGuiKey",  # enums
+            "ImGuiID", "ImS8", "ImU8", "ImS16", "ImU16", "ImS32", "ImU32", "ImS64", "ImU64",  # Scalar types
+            "IM_COL32"  # a function that returns a color (ImU32)
+        ]:
+            return True
+        if cpp_type.endswith("Flags"):
+            return True
+        return False
+
+    options.fn_params_adapt_mutable_param_with_default_value__fn_is_known_immutable_type = is_immutable_cpp_type
+
+    options.fn_params_type_replacements.add_replacements([(r"\bImVec2\b", "ImVec2Like"), (r"\bImVec4\b", "ImVec4Like")])
 
     options.srcmlcpp_options.ignored_warnings = [
         WarningType.LitgenClassMemberSkipBitfield,
@@ -237,6 +254,7 @@ def litgen_options_imgui(
             r"""
             ^signed char$ -> int
             ^char$ -> int
+            \bImVector\s*<\s*(.*?)\s*> -> ImVector_\1
             """
         )
     )

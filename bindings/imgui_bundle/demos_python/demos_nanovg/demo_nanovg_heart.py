@@ -95,8 +95,8 @@ def draw_scene(vg: nvg.Context, width: float, height: float):
 
 
 class AppStateNvgHeart:
-    vg: nvg.Context = None
-    nvg_framebuffer: nvg_imgui.NvgFramebuffer = None
+    vg: nvg.Context | None = None
+    nvg_framebuffer: nvg_imgui.NvgFramebuffer | None = None  # type: ignore
 
     def __init__(self):
         # Our NanoVG context
@@ -107,7 +107,7 @@ class AppStateNvgHeart:
 
     def init(self):
         # Instantiate the NanoVG context
-        self.vg = nvg_imgui.create_nvg_context_hello_imgui(nvg_imgui.NvgCreateFlags.antialias | nvg_imgui.NvgCreateFlags.stencil_strokes)
+        self.vg = nvg_imgui.create_nvg_context_hello_imgui(nvg_imgui.NvgCreateFlags.antialias.value | nvg_imgui.NvgCreateFlags.stencil_strokes.value)
 
         # Create a framebuffer
         nvg_image_flags = 0  # NVG_IMAGE_FLIPY | NVG_IMAGE_PREMULTIPLIED;
@@ -115,6 +115,7 @@ class AppStateNvgHeart:
 
     def release(self):
         self.nvg_framebuffer = None
+        assert self.vg is not None
         nvg_imgui.delete_nvg_context_hello_imgui(self.vg)
 
 
@@ -130,7 +131,10 @@ def main():
         imgui.text("This image below is rendered by NanoVG, via a framebuffer.")
 
         # Render our drawing to a framebuffer, and use it as a texture for ImGui
+        assert app_state.vg is not None
+        assert app_state.nvg_framebuffer is not None
         nvg_imgui.render_nvg_to_frame_buffer(app_state.vg, app_state.nvg_framebuffer, draw_scene)
+        assert app_state.nvg_framebuffer is not None
         imgui.image(app_state.nvg_framebuffer.texture_id, hello_imgui.em_to_vec2(50, 30))
 
         _, gDrawingState.heart_color = imgui.color_edit4("Heart color", gDrawingState.heart_color)

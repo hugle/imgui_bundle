@@ -72,7 +72,7 @@ class DemoAppTable:
     @immapp.static(
         shall_scroll_down=False, shall_scroll_up=False,
         scroll_delta=0.0, scroll_current=0.0, child_size=(0.0, 0.0))
-    def display_demo_app_table_with_scroll_buttons(self, window_name: str, window_size: ImVec2, gui: Callable):
+    def display_demo_app_table_with_scroll_buttons(self, window_name: str, window_size: ImVec2, gui: Callable[[], None]):
         statics = DemoAppTable.display_demo_app_table_with_scroll_buttons
 
         imgui.begin_child(window_name, window_size)
@@ -115,10 +115,10 @@ class DemoAppTable:
 
         def fn_table_gui():
             table_flags = (
-                imgui.TableFlags_.row_bg
-                | imgui.TableFlags_.borders
-                | imgui.TableFlags_.resizable
-                | imgui.TableFlags_.sizing_stretch_same
+                imgui.TableFlags_.row_bg.value
+                | imgui.TableFlags_.borders.value
+                | imgui.TableFlags_.resizable.value
+                | imgui.TableFlags_.sizing_stretch_same.value
             )
             nb_columns = 3
             if imgui.begin_table("Apps", nb_columns, table_flags):

@@ -15,6 +15,7 @@ import sys
 def test_version():
     if sys.platform == "win32":
         return
+
     import imgui_bundle
     assert imgui_bundle.__version__ >= "0.6.0"
 

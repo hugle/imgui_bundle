@@ -6,7 +6,7 @@ from typing import Any, Optional, Tuple, overload
 import numpy as np
 import enum
 
-from imgui_bundle.imgui import ImVec2, ImVec4, ImU32, ImDrawList, Storage, TextBuffer
+from imgui_bundle.imgui import ImVec2, ImVec4, ImU32, ImDrawList, Storage, TextBuffer, ImVec2Like, ImVec4Like
 from imgui_bundle.imgui.internal import ImRect
 from imgui_bundle import imgui
 from imgui_bundle.implot import (
@@ -14,7 +14,6 @@ from imgui_bundle.implot import (
     ImAxis,
     Cond,
     Scale,
-    IMPLOT_AUTO,
     ItemFlags,
     Point,
     Location,
@@ -85,7 +84,8 @@ time_t = int
 
 
 
-
+# #ifndef IMGUI_DISABLE
+#
 
 # Support for pre-1.84 versions. ImPool's GetSize() -> GetBufSize()
 
@@ -586,7 +586,7 @@ class AnnotationCollection:
     #         AppendV(pos, off, bg, fg, clamp, fmt, args);
     #         va_end(args);
     #     }
-    def append(self, pos: ImVec2, off: ImVec2, bg: ImU32, fg: ImU32, clamp: bool, fmt: str) -> None:
+    def append(self, pos: ImVec2Like, off: ImVec2Like, bg: ImU32, fg: ImU32, clamp: bool, fmt: str) -> None:
         """(private API)"""
         pass
 
@@ -618,8 +618,12 @@ class Tag:
     # int    TextOffset;    /* original C++ signature */
     text_offset: int
     # ImPlotTag(ImAxis Axis = ImAxis(), double Value = double(), ImU32 ColorBg = ImU32(), ImU32 ColorFg = ImU32(), int TextOffset = int());    /* original C++ signature */
-    def __init__(self, axis: ImAxis = ImAxis(), value: float = float(), color_bg: ImU32 = ImU32(), color_fg: ImU32 = ImU32(), text_offset: int = int()) -> None:
-        """Auto-generated default constructor with named params"""
+    def __init__(self, axis: Optional[ImAxis] = None, value: float = float(), color_bg: ImU32 = ImU32(), color_fg: ImU32 = ImU32(), text_offset: int = int()) -> None:
+        """Auto-generated default constructor with named params
+        ---
+        Python bindings defaults:
+            If Axis is None, then its default value will be: ImAxis()
+        """
         pass
 
 class TagCollection:
@@ -756,7 +760,7 @@ class Ticker:
     #         LateSize.x = size.x > LateSize.x ? size.x : LateSize.x;
     #         LateSize.y = size.y > LateSize.y ? size.y : LateSize.y;
     #     }
-    def override_size_late(self, size: ImVec2) -> None:
+    def override_size_late(self, size: ImVec2Like) -> None:
         """(private API)"""
         pass
 
@@ -1755,8 +1759,24 @@ class Context:
     # Specific to ImGui Bundle, when used inside imgui-node-editor
     can_drag_plot_in_node_editor: bool = False
     # ImPlotContext(ImPlotTicker CTicker = ImPlotTicker(), ImPlotAnnotationCollection Annotations = ImPlotAnnotationCollection(), ImPlotTagCollection Tags = ImPlotTagCollection(), ImPlotStyle Style = ImPlotStyle(), ImVector<ImGuiColorMod> ColorModifiers = ImVector<ImGuiColorMod>(), ImVector<ImGuiStyleMod> StyleModifiers = ImVector<ImGuiStyleMod>(), ImPlotColormapData ColormapData = ImPlotColormapData(), ImVector<int> TempInt1 = ImVector<int>(), int DigitalPlotItemCnt = int(), int DigitalPlotOffset = int(), ImPlotNextPlotData NextPlotData = ImPlotNextPlotData(), ImPlotNextItemData NextItemData = ImPlotNextItemData(), ImPlotInputMap InputMap = ImPlotInputMap(), bool OpenContextThisFrame = bool(), ImGuiTextBuffer MousePosStringBuilder = ImGuiTextBuffer(), bool CanDragPlotInNodeEditor = false);    /* original C++ signature */
-    def __init__(self, c_ticker: Ticker = Ticker(), annotations: AnnotationCollection = AnnotationCollection(), tags: TagCollection = TagCollection(), style: Style = Style(), color_modifiers: ImVector_ColorMod = ImVector_ColorMod(), style_modifiers: ImVector_StyleMod = ImVector_StyleMod(), colormap_data: ColormapData = ColormapData(), temp_int1: ImVector_int = ImVector_int(), digital_plot_item_cnt: int = int(), digital_plot_offset: int = int(), next_plot_data: NextPlotData = NextPlotData(), next_item_data: NextItemData = NextItemData(), input_map: InputMap = InputMap(), open_context_this_frame: bool = bool(), mouse_pos_string_builder: TextBuffer = TextBuffer(), can_drag_plot_in_node_editor: bool = False) -> None:
-        """Auto-generated default constructor with named params"""
+    def __init__(self, c_ticker: Optional[Ticker] = None, annotations: Optional[AnnotationCollection] = None, tags: Optional[TagCollection] = None, style: Optional[Style] = None, color_modifiers: Optional[ImVector_ColorMod] = None, style_modifiers: Optional[ImVector_StyleMod] = None, colormap_data: Optional[ColormapData] = None, temp_int1: Optional[ImVector_int] = None, digital_plot_item_cnt: int = int(), digital_plot_offset: int = int(), next_plot_data: Optional[NextPlotData] = None, next_item_data: Optional[NextItemData] = None, input_map: Optional[InputMap] = None, open_context_this_frame: bool = bool(), mouse_pos_string_builder: Optional[TextBuffer] = None, can_drag_plot_in_node_editor: bool = False) -> None:
+        """Auto-generated default constructor with named params
+        ---
+        Python bindings defaults:
+            If any of the params below is None, then its default value below will be used:
+                CTicker: Ticker()
+                Annotations: AnnotationCollection()
+                Tags: TagCollection()
+                Style: Style()
+                ColorModifiers: ImVector_ColorMod()
+                StyleModifiers: ImVector_StyleMod()
+                ColormapData: ColormapData()
+                TempInt1: ImVector_int()
+                NextPlotData: NextPlotData()
+                NextItemData: NextItemData()
+                InputMap: InputMap()
+                MousePosStringBuilder: TextBuffer()
+        """
         pass
 
 #-----------------------------------------------------------------------------
@@ -1843,8 +1863,12 @@ def show_subplots_context_menu(subplot: Subplot) -> None:
 #-----------------------------------------------------------------------------
 
 # IMPLOT_API bool BeginItem(const char* label_id, ImPlotItemFlags flags=0, ImPlotCol recolor_from=IMPLOT_AUTO);    /* original C++ signature */
-def begin_item(label_id: str, flags: ItemFlags = 0, recolor_from: Col = IMPLOT_AUTO) -> bool:
-    """ Begins a new item. Returns False if the item should not be plotted. Pushes PlotClipRect."""
+def begin_item(label_id: str, flags: ItemFlags = 0, recolor_from: Optional[Col] = None) -> bool:
+    """ Begins a new item. Returns False if the item should not be plotted. Pushes PlotClipRect.
+    ---
+    Python bindings defaults:
+        If recolor_from is None, then its default value will be: IMPLOT_AUTO
+    """
     pass
 
 
@@ -1984,24 +2008,32 @@ def show_axis_context_menu(axis: Axis, equal_axis: Axis, time_allowed: bool = Fa
 #-----------------------------------------------------------------------------
 
 # IMPLOT_API ImVec2 GetLocationPos(const ImRect& outer_rect, const ImVec2& inner_size, ImPlotLocation location, const ImVec2& pad = ImVec2(0,0));    /* original C++ signature */
-def get_location_pos(outer_rect: ImRect, inner_size: ImVec2, location: Location, pad: ImVec2 = ImVec2(0,0)) -> ImVec2:
-    """ Gets the position of an inner rect that is located inside of an outer rect according to an ImPlotLocation and padding amount."""
+def get_location_pos(outer_rect: ImRect, inner_size: ImVec2Like, location: Location, pad: Optional[ImVec2Like] = None) -> ImVec2:
+    """ Gets the position of an inner rect that is located inside of an outer rect according to an ImPlotLocation and padding amount.
+    ---
+    Python bindings defaults:
+        If pad is None, then its default value will be: ImVec2(0,0)
+    """
     pass
 # IMPLOT_API ImVec2 CalcLegendSize(ImPlotItemGroup& items, const ImVec2& pad, const ImVec2& spacing, bool vertical);    /* original C++ signature */
-def calc_legend_size(items: ItemGroup, pad: ImVec2, spacing: ImVec2, vertical: bool) -> ImVec2:
+def calc_legend_size(items: ItemGroup, pad: ImVec2Like, spacing: ImVec2Like, vertical: bool) -> ImVec2:
     """ Calculates the bounding box size of a legend _before_ clipping."""
     pass
 # IMPLOT_API bool ClampLegendRect(ImRect& legend_rect, const ImRect& outer_rect, const ImVec2& pad);    /* original C++ signature */
-def clamp_legend_rect(legend_rect: ImRect, outer_rect: ImRect, pad: ImVec2) -> bool:
+def clamp_legend_rect(legend_rect: ImRect, outer_rect: ImRect, pad: ImVec2Like) -> bool:
     """ Clips calculated legend size"""
     pass
 # IMPLOT_API bool ShowLegendEntries(ImPlotItemGroup& items, const ImRect& legend_bb, bool interactable, const ImVec2& pad, const ImVec2& spacing, bool vertical, ImDrawList& DrawList);    /* original C++ signature */
-def show_legend_entries(items: ItemGroup, legend_bb: ImRect, interactable: bool, pad: ImVec2, spacing: ImVec2, vertical: bool, draw_list: ImDrawList) -> bool:
+def show_legend_entries(items: ItemGroup, legend_bb: ImRect, interactable: bool, pad: ImVec2Like, spacing: ImVec2Like, vertical: bool, draw_list: ImDrawList) -> bool:
     """ Renders legend entries into a bounding box"""
     pass
 # IMPLOT_API void ShowAltLegend(const char* title_id, bool vertical = true, const ImVec2 size = ImVec2(0,0), bool interactable = true);    /* original C++ signature */
-def show_alt_legend(title_id: str, vertical: bool = True, size: ImVec2 = ImVec2(0,0), interactable: bool = True) -> None:
-    """ Shows an alternate legend for the plot identified by #title_id, outside of the plot frame (can be called before or after of Begin/EndPlot but must occur in the same ImGui window! This is not thoroughly tested nor scrollable!)."""
+def show_alt_legend(title_id: str, vertical: bool = True, size: Optional[ImVec2Like] = None, interactable: bool = True) -> None:
+    """ Shows an alternate legend for the plot identified by #title_id, outside of the plot frame (can be called before or after of Begin/EndPlot but must occur in the same ImGui window! This is not thoroughly tested nor scrollable!).
+    ---
+    Python bindings defaults:
+        If size is None, then its default value will be: ImVec2(0,0)
+    """
     pass
 # IMPLOT_API bool ShowLegendContextMenu(ImPlotLegend& legend, bool visible);    /* original C++ signature */
 def show_legend_context_menu(legend: Legend, visible: bool) -> bool:
@@ -2026,7 +2058,7 @@ def get_item_data() -> NextItemData:
 
 # static inline bool IsColorAuto(const ImVec4& col) { return col.w == -1; }    /* original C++ signature */
 @overload
-def is_color_auto(col: ImVec4) -> bool:
+def is_color_auto(col: ImVec4Like) -> bool:
     """ Returns True if a color is set to be automatically determined
     (private API)
     """
@@ -2054,11 +2086,11 @@ def get_style_color_u32(idx: Col) -> ImU32:
     pass
 
 # IMPLOT_API void AddTextVertical(ImDrawList *DrawList, ImVec2 pos, ImU32 col, const char* text_begin, const char* text_end = nullptr);    /* original C++ signature */
-def add_text_vertical(draw_list: ImDrawList, pos: ImVec2, col: ImU32, text_begin: str, text_end: Optional[str] = None) -> None:
+def add_text_vertical(draw_list: ImDrawList, pos: ImVec2Like, col: ImU32, text_begin: str, text_end: Optional[str] = None) -> None:
     """ Draws vertical text. The position is the bottom left of the text rect."""
     pass
 # IMPLOT_API void AddTextCentered(ImDrawList* DrawList, ImVec2 top_center, ImU32 col, const char* text_begin, const char* text_end = nullptr);    /* original C++ signature */
-def add_text_centered(draw_list: ImDrawList, top_center: ImVec2, col: ImU32, text_begin: str, text_end: Optional[str] = None) -> None:
+def add_text_centered(draw_list: ImDrawList, top_center: ImVec2Like, col: ImU32, text_begin: str, text_end: Optional[str] = None) -> None:
     """ Draws multiline horizontal text centered."""
     pass
 # static inline ImVec2 CalcTextSizeVertical(const char *text) {    /* original C++ signature */
@@ -2073,7 +2105,7 @@ def calc_text_size_vertical(text: str) -> ImVec2:
 # Returns white or black text given background color
 # static inline ImU32 CalcTextColor(const ImVec4& bg) { return (bg.x * 0.299f + bg.y * 0.587f + bg.z * 0.114f) > 0.5f ? IM_COL32_BLACK : IM_COL32_WHITE; }    /* original C++ signature */
 @overload
-def calc_text_color(bg: ImVec4) -> ImU32:
+def calc_text_color(bg: ImVec4Like) -> ImU32:
     """(private API)"""
     pass
 # static inline ImU32 CalcTextColor(ImU32 bg)         { return CalcTextColor(ImGui::ColorConvertU32ToFloat4(bg)); }    /* original C++ signature */
@@ -2095,7 +2127,7 @@ def calc_hover_color(col: ImU32) -> ImU32:
 #     if ((pos.y + size.y) > Max.y)   pos.y = Max.y - size.y;
 #     return pos;
 # }
-def clamp_label_pos(pos: ImVec2, size: ImVec2, min: ImVec2, max: ImVec2) -> ImVec2:
+def clamp_label_pos(pos: ImVec2Like, size: ImVec2Like, min: ImVec2Like, max: ImVec2Like) -> ImVec2:
     """ Clamps a label position so that it fits a rect defined by Min/Max
     (private API)
     """
@@ -2157,7 +2189,7 @@ def round_to(val: float, prec: int) -> float:
 #     float v3 = ((a1.x - a2.x) * (b1.y - b2.y) - (a1.y - a2.y) * (b1.x - b2.x));
 #     return ImVec2((v1 * (b1.x - b2.x) - v2 * (a1.x - a2.x)) / v3, (v1 * (b1.y - b2.y) - v2 * (a1.y - a2.y)) / v3);
 # }
-def intersection(a1: ImVec2, a2: ImVec2, b1: ImVec2, b2: ImVec2) -> ImVec2:
+def intersection(a1: ImVec2Like, a2: ImVec2Like, b1: ImVec2Like, b2: ImVec2Like) -> ImVec2:
     """ Returns the intersection point of two lines A and B (assumes they are not parallel!)
     (private API)
     """
@@ -2302,8 +2334,14 @@ class Formatter_Time_Data:
     # void* UserFormatterData;    /* original C++ signature */
     user_formatter_data: Any
     # Formatter_Time_Data(ImPlotTime Time = ImPlotTime(), ImPlotDateTimeSpec Spec = ImPlotDateTimeSpec());    /* original C++ signature */
-    def __init__(self, time: Time = Time(), spec: DateTimeSpec = DateTimeSpec()) -> None:
-        """Auto-generated default constructor with named params"""
+    def __init__(self, time: Optional[Time] = None, spec: Optional[DateTimeSpec] = None) -> None:
+        """Auto-generated default constructor with named params
+        ---
+        Python bindings defaults:
+            If any of the params below is None, then its default value below will be used:
+                Time: Time()
+                Spec: DateTimeSpec()
+        """
         pass
 
 
@@ -2313,6 +2351,9 @@ class Formatter_Time_Data:
 
 
 
+# namespace ImPlot
+
+# #endif
 ####################    </generated_from:implot_internal.h>    ####################
 
 # </litgen_stub>
